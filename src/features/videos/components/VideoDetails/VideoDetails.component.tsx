@@ -6,6 +6,8 @@ import { Button } from '@/components/Button';
 import { VideoPlayer } from '@/components/VideoPlayer';
 import type { Video } from '@/features/videos/types';
 
+import { styles } from './videoDetails.styles';
+
 type Props = { video: Video; player: Player; onEdit: () => void };
 
 export function VideoDetails({ video, player, onEdit }: Props) {
@@ -13,10 +15,10 @@ export function VideoDetails({ video, player, onEdit }: Props) {
   return (
     <ScrollView>
       <VideoPlayer player={player} />
-      <View className="gap-2 p-4">
-        <Text className="text-2xl font-bold">{video.name}</Text>
-        {!!video.description && <Text className="text-base text-gray-700">{video.description}</Text>}
-        <View className="mt-4">
+      <View className={styles.content}>
+        <Text className={styles.title}>{video.name}</Text>
+        {!!video.description && <Text className={styles.description}>{video.description}</Text>}
+        <View className={styles.actions}>
           <Button label={t('details.edit')} onPress={onEdit} />
         </View>
       </View>

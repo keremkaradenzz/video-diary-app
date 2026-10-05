@@ -4,8 +4,9 @@ import { View } from 'react-native';
 
 import { Button } from '@/components/Button';
 import { VideoPlayer } from '@/components/VideoPlayer';
+import { Scrubber } from '@/features/crop/components/Scrubber';
 
-import { Scrubber } from './Scrubber';
+import { styles } from './trimEditor.styles';
 
 type Props = {
   player: Player;
@@ -19,10 +20,10 @@ type Props = {
 export function TrimEditor({ player, duration, startSec, clipLength, onChangeStart, onNext }: Props) {
   const { t } = useTranslation();
   return (
-    <View className="flex-1 gap-4">
+    <View className={styles.container}>
       <VideoPlayer player={player} />
       <Scrubber duration={duration} start={startSec} clipLength={clipLength} onChange={onChangeStart} />
-      <View className="px-4">
+      <View className={styles.actions}>
         <Button label={t('crop.next')} onPress={onNext} />
       </View>
     </View>

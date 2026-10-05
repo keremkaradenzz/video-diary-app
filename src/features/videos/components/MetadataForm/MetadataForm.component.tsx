@@ -4,6 +4,8 @@ import { Text, TextInput, View } from 'react-native';
 import { Button } from '@/components/Button';
 import type { MetadataErrors } from '@/features/videos/schema';
 
+import { styles } from './metadataForm.styles';
+
 type Props = {
   name: string;
   description: string;
@@ -19,29 +21,29 @@ type Props = {
 export function MetadataForm(p: Props) {
   const { t } = useTranslation();
   return (
-    <View className="gap-4 p-4">
-      <View className="gap-1">
+    <View className={styles.container}>
+      <View className={styles.field}>
         <TextInput
           value={p.name}
           onChangeText={p.onChangeName}
           placeholder={t('form.name')}
           maxLength={80}
-          className="rounded-lg border border-gray-300 px-3 py-3 text-base"
+          className={styles.input}
         />
-        {p.errors.name && <Text className="text-sm text-red-600">{t(p.errors.name)}</Text>}
+        {p.errors.name && <Text className={styles.error}>{t(p.errors.name)}</Text>}
       </View>
-      <View className="gap-1">
+      <View className={styles.field}>
         <TextInput
           value={p.description}
           onChangeText={p.onChangeDescription}
           placeholder={t('form.description')}
           multiline
           textAlignVertical="top"
-          className="h-32 rounded-lg border border-gray-300 px-3 py-3 text-base"
+          className={styles.textarea}
         />
-        {p.errors.description && <Text className="text-sm text-red-600">{t(p.errors.description)}</Text>}
+        {p.errors.description && <Text className={styles.error}>{t(p.errors.description)}</Text>}
       </View>
-      {p.error && <Text className="text-sm text-red-600">{p.error}</Text>}
+      {p.error && <Text className={styles.error}>{p.error}</Text>}
       <Button label={p.submitLabel} onPress={p.onSubmit} loading={p.loading} />
     </View>
   );

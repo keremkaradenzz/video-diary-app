@@ -2,6 +2,8 @@ import Slider from '@react-native-community/slider';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
+import { styles } from './scrubber.styles';
+
 type Props = {
   duration: number;
   start: number;
@@ -14,9 +16,9 @@ export function Scrubber({ duration, start, clipLength, onChange }: Props) {
   const { t } = useTranslation();
   const max = Math.max(duration - clipLength, 0);
   return (
-    <View className="gap-2 px-4">
+    <View className={styles.container}>
       <Slider minimumValue={0} maximumValue={max} step={0.1} value={start} onValueChange={onChange} />
-      <Text className="text-center text-base">
+      <Text className={styles.range}>
         {t('crop.range', {
           start: start.toFixed(1),
           end: (start + clipLength).toFixed(1),
