@@ -56,6 +56,24 @@ describe('naming conventions', () => {
   });
 });
 
+describe('architecture: dependencies', () => {
+  const code = (dir: string) =>
+    walk(dir).filter((f) => /\.tsx?$/.test(f) && !f.includes('.test.'));
+
+  // crop builds on videos; the reverse would create a cycle.
+  it.each(code(join(__dirname, 'features/videos')))('%s does not import the crop feature', (file) => {
+    expect(readFileSync(file, 'utf8')).not.toMatch(/@\/features\/crop/);
+  });
+
+  // Server-state hooks live in one predictable place per feature.
+  it('keeps useQuery/useMutation in queries.ts files', () => {
+    const offenders = code(__dirname).filter(
+      (f) => /\buse(Query|Mutation)\(/.test(readFileSync(f, 'utf8')) && basename(f) !== 'queries.ts',
+    );
+    expect(offenders).toEqual([]);
+  });
+});
+
 describe('architecture: containers', () => {
   const screens = walk(join(__dirname, 'app')).filter((f) => f.endsWith('.tsx') && !f.endsWith('_layout.tsx'));
 
