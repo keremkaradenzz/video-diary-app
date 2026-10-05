@@ -3,7 +3,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router';
 
 import { useCropStore } from '@/features/crop/store';
-import i18n from '@/lib/i18n';
+import i18n from '@/i18n';
 
 import { useSelectStep } from './useSelectStep';
 

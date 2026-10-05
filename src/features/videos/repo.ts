@@ -1,4 +1,4 @@
-import { getDb } from '@/lib/db';
+import { getDb } from '@/db';
 
 import type { Metadata } from './schema';
 import type { Video } from './types';

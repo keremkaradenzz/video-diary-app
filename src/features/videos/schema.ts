@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const metadataSchema = z.object({
-  // Messages are i18n keys (see lib/i18n); the form translates them for display.
+  // Messages are i18n keys (see src/i18n); the form translates them for display.
   name: z.string().trim().min(1, 'validation.nameRequired').max(60, 'validation.nameMax'),
   description: z.string().trim().max(500, 'validation.descriptionMax'),
 });
