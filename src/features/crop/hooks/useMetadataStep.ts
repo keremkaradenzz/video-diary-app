@@ -1,0 +1,34 @@
+import { router } from 'expo-router';
+
+import { useCropStore } from '@/features/crop/store';
+import { useMetadataForm } from '@/features/videos/hooks/useMetadataForm';
+import { useSaveVideo } from '@/features/videos/queries';
+
+import { useRequireSource } from './useRequireSource';
+import { useTrimVideo } from './useTrimVideo';
+
+/** Final step: validate metadata, trim the clip, save it, close the modal. */
+export function useMetadataStep() {
+  const sourceUri = useRequireSource();
+  const startSec = useCropStore((s) => s.startSec);
+  const trim = useTrimVideo();
+  const save = useSaveVideo();
+
+  const form = useMetadataForm(undefined, async (m) => {
+    if (!sourceUri) return;
+    try {
+      const { uri } = await trim.mutateAsync({ uri: sourceUri, start: startSec });
+      await save.mutateAsync({ ...m, uri, startSec });
+      router.dismissAll();
+    } catch {
+      // surfaced through the mutations' error state
+    }
+  });
+
+  return {
+    ready: !!sourceUri,
+    form,
+    isLoading: trim.isPending || save.isPending,
+    error: trim.error?.message ?? save.error?.message ?? null,
+  };
+}

@@ -1,23 +1,11 @@
-import { useVideoPlayer, VideoView, type VideoPlayer as Player } from 'expo-video';
-import { useEffect } from 'react';
+import { VideoView, type VideoPlayer as Player } from 'expo-video';
 
 type Props = {
-  uri: string;
-  /** Called once on mount; use it to loop a window, listen to events, etc. */
-  onReady?: (player: Player) => void;
+  player: Player;
   className?: string;
 };
 
-export function VideoPlayer({ uri, onReady, className = 'h-72 w-full bg-black' }: Props) {
-  const player = useVideoPlayer(uri, (p) => {
-    p.loop = true;
-    p.play();
-  });
-
-  useEffect(() => {
-    onReady?.(player);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [player]);
-
+/** Presentational: renders a player created by `useClipPlayer`. */
+export function VideoPlayer({ player, className = 'h-72 w-full bg-black' }: Props) {
   return <VideoView player={player} className={className} nativeControls contentFit="contain" />;
 }

@@ -1,4 +1,22 @@
-import { metadataSchema } from './schema';
+import { metadataSchema, validateMetadata } from './schema';
+
+describe('validateMetadata', () => {
+  it('returns trimmed data when valid', () => {
+    expect(validateMetadata({ name: ' a ', description: '' })).toEqual({
+      ok: true,
+      data: { name: 'a', description: '' },
+    });
+  });
+
+  it('returns one message per invalid field', () => {
+    const res = validateMetadata({ name: '', description: 'x'.repeat(501) });
+    expect(res).toMatchObject({ ok: false });
+    if (!res.ok) {
+      expect(res.errors.name).toBe('Name is required');
+      expect(res.errors.description).toBe('Max 500 characters');
+    }
+  });
+});
 
 describe('metadataSchema', () => {
   it('accepts valid input and trims it', () => {

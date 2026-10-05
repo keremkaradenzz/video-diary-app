@@ -1,6 +1,9 @@
 import { Stack } from 'expo-router';
 
+import { useResetCropOnExit } from '@/features/crop/hooks/useResetCropOnExit';
+
 export default function CropLayout() {
+  useResetCropOnExit();
   return (
     <Stack>
       <Stack.Screen name="index" options={{ title: '1. Select video' }} />

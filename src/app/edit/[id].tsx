@@ -1,25 +1,18 @@
-import { router, useLocalSearchParams } from 'expo-router';
-import { ActivityIndicator, Text } from 'react-native';
+import { Loader, Notice } from '@/components/ui/Feedback';
+import { MetadataForm } from '@/features/videos/components/MetadataForm';
+import { useEditVideo } from '@/features/videos/hooks/useEditVideo';
+import { useRouteVideo } from '@/features/videos/hooks/useRouteVideo';
+import type { Video } from '@/features/videos/schema';
 
-import { MetadataForm } from '@/components/MetadataForm';
-import { useUpdateMetadata, useVideo } from '@/features/videos/queries';
+export default function EditVideoScreen() {
+  const { video, isLoading } = useRouteVideo();
+  if (isLoading) return <Loader />;
+  if (!video) return <Notice text="Video not found." />;
+  return <EditVideoContainer video={video} />;
+}
 
-export default function EditVideo() {
-  const { id } = useLocalSearchParams<{ id: string }>();
-  const videoId = Number(id);
-  const { data, isPending } = useVideo(videoId);
-  const update = useUpdateMetadata(videoId);
-
-  if (isPending) return <ActivityIndicator className="flex-1" />;
-  if (!data) return <Text className="mt-20 text-center">Video not found.</Text>;
-
-  return (
-    <MetadataForm
-      initial={{ name: data.name, description: data.description }}
-      submitLabel="Save"
-      loading={update.isPending}
-      error={update.error?.message}
-      onSubmit={(m) => update.mutate(m, { onSuccess: () => router.back() })}
-    />
-  );
+// Separate container so the form state initialises from a loaded video.
+function EditVideoContainer({ video }: { video: Video }) {
+  const { form, isLoading, error } = useEditVideo(video);
+  return <MetadataForm {...form} submitLabel="Save" loading={isLoading} error={error} />;
 }
