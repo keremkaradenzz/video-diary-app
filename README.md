@@ -44,38 +44,51 @@ route (container)  ->  controller hook  ->  data hooks / store / repo
 ```
 src/
   app/          containers: /, /videos/[id], /videos/[id]/edit, /crop/*
-  components/   domain-agnostic UI: Button, Loader, Notice, VideoPlayer
+  components/   domain-agnostic UI, one folder per component: Button, Loader, Notice, VideoPlayer
   hooks/        domain-agnostic hooks: useClipPlayer
   features/     domain code; crop may depend on videos, never the reverse
     crop/       components (SelectVideo, TrimEditor, Scrubber), hooks (useSelectStep, useTrimStep, useMetadataStep, ...), store, queries, constants
     videos/     components (VideoList, VideoDetails, MetadataForm), hooks, types, schema, repo, queries
-  lib/          db.ts (SQLite connection and schema), i18n/ (setup and locales)
+  db/           SQLite connection and schema (index.ts); migrations will live here
+  i18n/         setup (index.ts) and locales/ (en.ts, tr.ts)
 ```
+
+Every component is a folder with the same three files:
+
+```
+Button/
+  Button.component.tsx   the component (props in, JSX out)
+  button.styles.ts       export const styles = { container: '...', label: '...' }
+  index.ts               export { Button } from './Button.component';
+```
+
+Class names stay complete literal strings so Tailwind can find them (`tailwind.config.js` scans `src/**/*.{ts,tsx}`). `.vscode/settings.json` points Tailwind IntelliSense at `styles = { ... }` objects. Tests sit in the same folder as `Name.component.test.tsx`.
 
 ### Naming
 
 | What | Convention | Example |
 |---|---|---|
-| Component file | `PascalCase.tsx`, one component, file name = export | `VideoList.tsx` |
+| Component folder | `PascalCase/`, with `Name.component.tsx`, `name.styles.ts`, `index.ts` | `VideoList/VideoList.component.tsx` |
+| Styles file | `camelCase.styles.ts`, one `styles` object of literal class strings | `videoList.styles.ts` |
 | Hook file | `useXxx.ts`, file name = export | `useTrimStep.ts` |
 | Route file | lowercase, `[param]`, `_layout`; collection name is plural, same as the feature | `videos/[id]/edit.tsx` |
 | Route default export | `<Name>Screen` | `VideoDetailsScreen` |
 | Data modules | lowercase noun, one role each, flat at the feature root | `repo.ts` (SQLite), `queries.ts` (TanStack Query hooks), `store.ts` (Zustand), `schema.ts` (Zod validation), `types.ts` (entity types), `constants.ts` |
 | Tests | next to the code, `*.test.ts` | `schema.test.ts` |
 | Imports | `@/` across folders, `./` inside a folder | |
-| `index.ts` | only as a module entry (`lib/i18n/index.ts`); no re-export barrels | |
+| `index.ts` | a single named re-export in component folders, or a module entry (`i18n/index.ts`, `db/index.ts`); never `export *` | |
 
 When a feature grows past roughly eight root files, group its data modules into a `data/` folder; until then flat names stay easy to find.
 
-`src/architecture.test.ts` enforces this. It also fails if a presentational component imports the router, store, queries, SQLite or a hook, if a container reaches into the data layer directly, if `videos` imports `crop`, or if `useQuery`/`useMutation` appear outside a `queries.ts`.
+`src/architecture.test.ts` enforces this, including the component folder layout. It also fails if a presentational component imports the router, store, queries, SQLite or a hook, if a container reaches into the data layer directly, if `videos` imports `crop`, or if `useQuery`/`useMutation` appear outside a `queries.ts`.
 
 Trimmed clips are copied into the app's document directory and listed from SQLite.
 
 ## i18n
 
-All UI text lives in `src/lib/i18n/locales/` (`en.ts`, `tr.ts`) and is read with `t('section.key')` from `react-i18next`. The language follows the device (English if unsupported). `t()` keys are type-checked against `en.ts`, and `tr.ts` is typed as `typeof en`, so a missing key fails `npm run typecheck`. Validation errors from Zod are keys (`validation.*`) translated by the form.
+All UI text lives in `src/i18n/locales/` (`en.ts`, `tr.ts`) and is read with `t('section.key')` from `react-i18next`. The language follows the device (English if unsupported). `t()` keys are type-checked against `en.ts`, and `tr.ts` is typed as `typeof en`, so a missing key fails `npm run typecheck`. Validation errors from Zod are keys (`validation.*`) translated by the form.
 
-To add a language: create `locales/<code>.ts` typed as `typeof en` and register it in `src/lib/i18n/index.ts`.
+To add a language: create `locales/<code>.ts` typed as `typeof en` and register it in `src/i18n/index.ts`.
 
 ## Commit messages
 
