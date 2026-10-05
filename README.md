@@ -39,19 +39,32 @@ route (container)  ->  controller hook  ->  data hooks / store / repo
 | Container | `src/app/**` (route files, ~10 lines) | controller hooks, view components |
 | Controller hook | `src/features/*/hooks/` | router, store, queries, other hooks |
 | Data hooks | `src/features/videos/queries.ts`, `crop/store.ts` | repo, TanStack Query, Zustand |
-| Presentational | `src/components/**`, `src/features/*/components/` | props only; no router, store, queries, SQLite |
+| Presentational | `src/components/`, `src/features/*/components/` | props only; no router, store, queries, SQLite |
 
 ```
 src/
-  app/          containers: /, /video/[id], /edit/[id], /crop/*
-  components/   shared UI: Button, Feedback, VideoPlayer
-  features/
-    crop/       components (SelectVideo, TrimEditor, Scrubber), hooks (one per step), store
+  app/          containers: /, /video/[id], /video/[id]/edit, /crop/*
+  components/   domain-agnostic UI: Button, Loader, Notice, VideoPlayer
+  hooks/        domain-agnostic hooks: useClipPlayer
+  features/     domain code; crop may depend on videos, never the reverse
+    crop/       components (SelectVideo, TrimEditor, Scrubber), hooks (useSelectStep, useTrimStep, useMetadataStep, ...), store
     videos/     components (VideoList, VideoDetails, MetadataForm), hooks, schema, repo, queries
   lib/          db.ts (SQLite connection and schema), i18n/ (setup and locales)
 ```
 
-`src/architecture.test.ts` fails if a presentational component imports the router, store, queries, SQLite or a hook, or if a container reaches into the data layer directly.
+### Naming
+
+| What | Convention | Example |
+|---|---|---|
+| Component file | `PascalCase.tsx`, one component, file name = export | `VideoList.tsx` |
+| Hook file | `useXxx.ts`, file name = export | `useTrimStep.ts` |
+| Route file | lowercase, `[param]`, `_layout` | `video/[id]/edit.tsx` |
+| Route default export | `<Name>Screen` | `VideoDetailsScreen` |
+| Data modules | lowercase noun | `repo.ts`, `queries.ts`, `schema.ts`, `store.ts` |
+| Tests | next to the code, `*.test.ts` | `schema.test.ts` |
+| Imports | `@/` across folders, `./` inside a folder; no barrel files | |
+
+`src/architecture.test.ts` enforces this. It also fails if a presentational component imports the router, store, queries, SQLite or a hook, or if a container reaches into the data layer directly.
 
 Trimmed clips are copied into the app's document directory and listed from SQLite.
 
