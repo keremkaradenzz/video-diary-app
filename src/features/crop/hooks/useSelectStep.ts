@@ -25,5 +25,5 @@ export function useSelectStep() {
     router.push('/crop/trim');
   };
 
-  return { onPick, error };
+  return { onPick, onClose: () => router.dismissAll(), error, minSeconds: CLIP_SECONDS };
 }

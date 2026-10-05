@@ -1,8 +1,14 @@
+import { Image } from 'expo-image';
+import type { VideoThumbnail } from 'expo-video';
 import { useTranslation } from 'react-i18next';
-import { Text, TextInput, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import Animated, { FadeInDown } from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/Button';
-import type { MetadataErrors } from '@/features/videos/schema';
+import { ScreenHeader } from '@/components/ScreenHeader';
+import { StepBar } from '@/components/StepBar';
+import { DESCRIPTION_MAX, NAME_MAX, type MetadataErrors } from '@/features/videos/schema';
 
 import { styles } from './metadataForm.styles';
 
@@ -16,35 +22,92 @@ type Props = {
   submitLabel: string;
   loading?: boolean;
   error?: string | null;
+  /** Shows the step indicator when the form is part of the crop flow. */
+  step?: number;
+  onBack?: () => void;
+  heading?: string;
+  /** Small clip preview shown next to the heading. */
+  thumbnail?: VideoThumbnail;
+  duration?: string;
 };
 
 export function MetadataForm(p: Props) {
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   return (
-    <View className={styles.container}>
+    <ScrollView
+      contentContainerClassName={styles.container}
+      contentContainerStyle={{ paddingBottom: Math.max(insets.bottom, 16) }}
+      keyboardShouldPersistTaps="handled"
+      automaticallyAdjustKeyboardInsets
+    >
+      {p.onBack && (p.step !== undefined ? <StepBar step={p.step} onBack={p.onBack} /> : <ScreenHeader onBack={p.onBack} />)}
+      {(!!p.heading || !!p.thumbnail) && (
+        <View className={styles.headingRow}>
+          {p.thumbnail && (
+            <View className={styles.thumb}>
+              <Image source={p.thumbnail} style={StyleSheet.absoluteFill} contentFit="cover" />
+              {!!p.duration && (
+                <View className={styles.badge}>
+                  <Text className={styles.badgeText}>{p.duration}</Text>
+                </View>
+              )}
+            </View>
+          )}
+          {!!p.heading && <Text className={styles.heading}>{p.heading}</Text>}
+        </View>
+      )}
       <View className={styles.field}>
+        <View className={styles.labelRow}>
+          <Text className={styles.label}>{t('form.name')}</Text>
+          <Text className={styles.counter}>
+            {p.name.length} / {NAME_MAX}
+          </Text>
+        </View>
         <TextInput
           value={p.name}
           onChangeText={p.onChangeName}
-          placeholder={t('form.name')}
-          maxLength={80}
-          className={styles.input}
+          maxLength={NAME_MAX + 20}
+          editable={!p.loading}
+          accessibilityLabel={t('form.name')}
+          className={`${styles.input} ${p.errors.name ? styles.inputError : ''}`}
         />
-        {p.errors.name && <Text className={styles.error}>{t(p.errors.name)}</Text>}
+        {p.errors.name && (
+          <Animated.Text entering={FadeInDown} className={styles.error}>
+            {t(p.errors.name)}
+          </Animated.Text>
+        )}
       </View>
       <View className={styles.field}>
+        <View className={styles.labelRow}>
+          <Text className={styles.label}>
+            {t('form.description')} <Text className={styles.optional}>({t('form.optional')})</Text>
+          </Text>
+          <Text className={styles.counter}>
+            {p.description.length} / {DESCRIPTION_MAX}
+          </Text>
+        </View>
         <TextInput
           value={p.description}
           onChangeText={p.onChangeDescription}
-          placeholder={t('form.description')}
           multiline
           textAlignVertical="top"
-          className={styles.textarea}
+          editable={!p.loading}
+          accessibilityLabel={t('form.description')}
+          className={`${styles.textarea} ${p.errors.description ? styles.inputError : ''}`}
         />
-        {p.errors.description && <Text className={styles.error}>{t(p.errors.description)}</Text>}
+        {p.errors.description && (
+          <Animated.Text entering={FadeInDown} className={styles.error}>
+            {t(p.errors.description)}
+          </Animated.Text>
+        )}
       </View>
-      {p.error && <Text className={styles.error}>{p.error}</Text>}
+      {p.error && (
+        <Animated.Text entering={FadeInDown} className={styles.error}>
+          {p.error}
+        </Animated.Text>
+      )}
       <Button label={p.submitLabel} onPress={p.onSubmit} loading={p.loading} />
-    </View>
+    </ScrollView>
   );
 }

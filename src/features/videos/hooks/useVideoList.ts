@@ -1,13 +1,18 @@
 import { router } from 'expo-router';
 
-import { useVideos } from '@/features/videos/queries';
+import { CLIP_SECONDS } from '@/constants';
+import { useThumbnails, useVideos } from '@/features/videos/queries';
 
 export function useVideoList() {
   const { data, isPending } = useVideos();
+  const videos = data ?? [];
+  const thumbnails = useThumbnails(videos);
   return {
-    videos: data ?? [],
+    videos,
+    thumbnails,
     isLoading: isPending,
     onSelect: (id: number) => router.push({ pathname: '/videos/[id]', params: { id } }),
+    clipSeconds: CLIP_SECONDS,
     onCreate: () => router.push('/crop'),
   };
 }

@@ -18,6 +18,6 @@ export default function EditVideoScreen() {
 // Separate container so the form state initialises from a loaded video.
 function EditVideoContainer({ video }: { video: Video }) {
   const { t } = useTranslation();
-  const { form, isLoading, error } = useEditVideo(video);
-  return <MetadataForm {...form} submitLabel={t('edit.save')} loading={isLoading} error={error} />;
+  const { form, isLoading, error, onBack } = useEditVideo(video);
+  return <MetadataForm {...form} onBack={onBack} heading={t('edit.heading')} submitLabel={t('edit.save')} loading={isLoading} error={error} />;
 }

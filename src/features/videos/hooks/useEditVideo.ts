@@ -10,5 +10,5 @@ export function useEditVideo(video: Video) {
   const form = useMetadataForm({ name: video.name, description: video.description }, (m) =>
     update.mutate(m, { onSuccess: () => router.back() }),
   );
-  return { form, isLoading: update.isPending, error: update.error?.message ?? null };
+  return { form, onBack: () => router.back(), isLoading: update.isPending, error: update.error?.message ?? null };
 }

@@ -7,12 +7,24 @@ type Props = {
   onPress: () => void;
   loading?: boolean;
   disabled?: boolean;
+  variant?: 'primary' | 'secondary';
 };
 
-export function Button({ label, onPress, loading, disabled }: Props) {
+export function Button({ label, onPress, loading, disabled, variant = 'primary' }: Props) {
+  const primary = variant === 'primary';
   return (
-    <Pressable onPress={onPress} disabled={disabled || loading} className={styles.container}>
-      {loading ? <ActivityIndicator color="white" /> : <Text className={styles.label}>{label}</Text>}
+    <Pressable
+      onPress={onPress}
+      disabled={disabled || loading}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      className={`${styles.container} ${primary ? styles.primary : styles.secondary}`}
+    >
+      {loading ? (
+        <ActivityIndicator color={primary ? 'white' : '#4F46E5'} />
+      ) : (
+        <Text className={`${styles.label} ${primary ? styles.labelPrimary : styles.labelSecondary}`}>{label}</Text>
+      )}
     </Pressable>
   );
 }

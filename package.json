@@ -52,6 +52,8 @@
     "@types/node": "^26.6.4",
     "@types/react": "~19.2.2",
     "@types/react-test-renderer": "^19.3.0",
+    "eslint": "^9.0.0",
+    "eslint-config-expo": "~57.0.2",
     "husky": "^9.1.7",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "react-test-renderer": "^19.2.3",
@@ -60,8 +62,8 @@
   },
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "lint": "expo lint",
     "prepare": "husky",
     "typecheck": "tsc --noEmit",
@@ -70,6 +72,7 @@
   "private": true,
   "jest": {
     "preset": "jest-expo",
+    "setupFiles": ["<rootDir>/src/test/setup.ts"],
     "moduleNameMapper": {
       "^@/(.*)$": "<rootDir>/src/$1"
     }

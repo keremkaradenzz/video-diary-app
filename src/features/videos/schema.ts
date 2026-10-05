@@ -1,9 +1,12 @@
 import { z } from 'zod';
 
+export const NAME_MAX = 60;
+export const DESCRIPTION_MAX = 500;
+
 export const metadataSchema = z.object({
   // Messages are i18n keys (see src/i18n); the form translates them for display.
-  name: z.string().trim().min(1, 'validation.nameRequired').max(60, 'validation.nameMax'),
-  description: z.string().trim().max(500, 'validation.descriptionMax'),
+  name: z.string().trim().min(1, 'validation.nameRequired').max(NAME_MAX, 'validation.nameMax'),
+  description: z.string().trim().max(DESCRIPTION_MAX, 'validation.descriptionMax'),
 });
 
 export type ValidationKey = 'validation.nameRequired' | 'validation.nameMax' | 'validation.descriptionMax';

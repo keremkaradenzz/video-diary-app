@@ -1,7 +1,24 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { File, Paths } from 'expo-file-system';
 
 import { CLIP_SECONDS } from './constants';
+import { generateThumbnails } from '@/utils/thumbnails';
+
+const FRAMES = 6;
+
+/** Evenly spaced frames across the source video, for the trim strip. */
+export const useFilmstrip = (uri: string | null, duration: number) =>
+  useQuery({
+    queryKey: ['filmstrip', uri, duration],
+    enabled: !!uri && duration > 0,
+    staleTime: Infinity,
+    queryFn: () =>
+      generateThumbnails(
+        uri!,
+        Array.from({ length: FRAMES }, (_, i) => ((i + 0.5) * duration) / FRAMES),
+        160,
+      ),
+  });
 
 const TRIM_UNAVAILABLE = 'TRIM_UNAVAILABLE';
 
@@ -35,4 +52,13 @@ export const useTrimVideo = () =>
       new File(tmp).copy(dest);
       return { uri: dest.uri };
     },
+  });
+
+/** Frame at the start of the selected window, shown as the clip preview in the details step. */
+export const useClipThumbnail = (uri: string | null, start: number) =>
+  useQuery({
+    queryKey: ['clip-thumbnail', uri, start],
+    enabled: !!uri,
+    staleTime: Infinity,
+    queryFn: async () => (await generateThumbnails(uri!, [start], 240))[0] ?? null,
   });

@@ -1,7 +1,8 @@
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 
-import { isTrimUnavailable, useTrimVideo } from '@/features/crop/queries';
+import { CLIP_SECONDS } from '@/constants';
+import { isTrimUnavailable, useClipThumbnail, useTrimVideo } from '@/features/crop/queries';
 import { useCropStore } from '@/features/crop/store';
 import { useMetadataForm } from '@/features/videos/hooks/useMetadataForm';
 import { useSaveVideo } from '@/features/videos/queries';
@@ -14,6 +15,7 @@ export function useMetadataStep() {
   const sourceUri = useRequireSource();
   const startSec = useCropStore((s) => s.startSec);
   const trim = useTrimVideo();
+  const thumbnail = useClipThumbnail(sourceUri, startSec);
   const save = useSaveVideo();
 
   const form = useMetadataForm(undefined, async (m) => {
@@ -29,7 +31,10 @@ export function useMetadataStep() {
 
   return {
     ready: !!sourceUri,
+    onBack: () => router.back(),
     form,
+    thumbnail: thumbnail.data ?? undefined,
+    duration: `0:${String(CLIP_SECONDS).padStart(2, '0')}`,
     isLoading: trim.isPending || save.isPending,
     error: isTrimUnavailable(trim.error)
       ? t('crop.trimUnavailable')
