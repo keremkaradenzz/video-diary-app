@@ -38,17 +38,17 @@ route (container)  ->  controller hook  ->  data hooks / store / repo
 |---|---|---|
 | Container | `src/app/**` (route files, ~10 lines) | controller hooks, view components |
 | Controller hook | `src/features/*/hooks/` | router, store, queries, other hooks |
-| Data hooks | `src/features/videos/queries.ts`, `crop/store.ts` | repo, TanStack Query, Zustand |
+| Data hooks | `src/features/*/queries.ts`, `crop/store.ts` | repo, TanStack Query, Zustand |
 | Presentational | `src/components/`, `src/features/*/components/` | props only; no router, store, queries, SQLite |
 
 ```
 src/
-  app/          containers: /, /video/[id], /video/[id]/edit, /crop/*
+  app/          containers: /, /videos/[id], /videos/[id]/edit, /crop/*
   components/   domain-agnostic UI: Button, Loader, Notice, VideoPlayer
   hooks/        domain-agnostic hooks: useClipPlayer
   features/     domain code; crop may depend on videos, never the reverse
-    crop/       components (SelectVideo, TrimEditor, Scrubber), hooks (useSelectStep, useTrimStep, useMetadataStep, ...), store
-    videos/     components (VideoList, VideoDetails, MetadataForm), hooks, schema, repo, queries
+    crop/       components (SelectVideo, TrimEditor, Scrubber), hooks (useSelectStep, useTrimStep, useMetadataStep, ...), store, queries, constants
+    videos/     components (VideoList, VideoDetails, MetadataForm), hooks, types, schema, repo, queries
   lib/          db.ts (SQLite connection and schema), i18n/ (setup and locales)
 ```
 
@@ -58,13 +58,16 @@ src/
 |---|---|---|
 | Component file | `PascalCase.tsx`, one component, file name = export | `VideoList.tsx` |
 | Hook file | `useXxx.ts`, file name = export | `useTrimStep.ts` |
-| Route file | lowercase, `[param]`, `_layout` | `video/[id]/edit.tsx` |
+| Route file | lowercase, `[param]`, `_layout`; collection name is plural, same as the feature | `videos/[id]/edit.tsx` |
 | Route default export | `<Name>Screen` | `VideoDetailsScreen` |
-| Data modules | lowercase noun | `repo.ts`, `queries.ts`, `schema.ts`, `store.ts` |
+| Data modules | lowercase noun, one role each, flat at the feature root | `repo.ts` (SQLite), `queries.ts` (TanStack Query hooks), `store.ts` (Zustand), `schema.ts` (Zod validation), `types.ts` (entity types), `constants.ts` |
 | Tests | next to the code, `*.test.ts` | `schema.test.ts` |
-| Imports | `@/` across folders, `./` inside a folder; no barrel files | |
+| Imports | `@/` across folders, `./` inside a folder | |
+| `index.ts` | only as a module entry (`lib/i18n/index.ts`); no re-export barrels | |
 
-`src/architecture.test.ts` enforces this. It also fails if a presentational component imports the router, store, queries, SQLite or a hook, or if a container reaches into the data layer directly.
+When a feature grows past roughly eight root files, group its data modules into a `data/` folder; until then flat names stay easy to find.
+
+`src/architecture.test.ts` enforces this. It also fails if a presentational component imports the router, store, queries, SQLite or a hook, if a container reaches into the data layer directly, if `videos` imports `crop`, or if `useQuery`/`useMutation` appear outside a `queries.ts`.
 
 Trimmed clips are copied into the app's document directory and listed from SQLite.
 
