@@ -1,5 +1,5 @@
 import { readdirSync, readFileSync, statSync } from 'fs';
-import { join } from 'path';
+import { basename, join } from 'path';
 
 // Presentational components (src/components, src/features/*/components) must stay pure:
 // props in, JSX out. Data, navigation and side effects belong in hooks and containers.
@@ -33,6 +33,26 @@ describe('architecture: presentational components', () => {
     const src = readFileSync(file, 'utf8');
     const hit = FORBIDDEN.find((re) => re.test(src));
     expect(hit).toBeUndefined();
+  });
+});
+
+describe('naming conventions', () => {
+  const sources = (dir: string) =>
+    walk(__dirname).filter((f) => f.includes(`/${dir}/`) && /\.tsx?$/.test(f) && !f.includes('.test.'));
+  const stem = (f: string) => basename(f).replace(/\.tsx?$/, '');
+
+  it.each(sources('components'))('%s: PascalCase file exporting the same name', (file) => {
+    expect(stem(file)).toMatch(/^[A-Z][A-Za-z0-9]*$/);
+    expect(readFileSync(file, 'utf8')).toMatch(new RegExp(`export (function|const) ${stem(file)}\\b`));
+  });
+
+  it.each(sources('hooks'))('%s: useXxx file exporting the same name', (file) => {
+    expect(stem(file)).toMatch(/^use[A-Z][A-Za-z0-9]*$/);
+    expect(readFileSync(file, 'utf8')).toMatch(new RegExp(`export (function|const) ${stem(file)}\\b`));
+  });
+
+  it.each(walk(join(__dirname, 'app')))('%s: route files are lowercase or [param]', (file) => {
+    expect(stem(file)).toMatch(/^(_layout|index|[a-z][a-z-]*|\[[a-z]+\])$/);
   });
 });
 
