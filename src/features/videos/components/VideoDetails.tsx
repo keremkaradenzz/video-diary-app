@@ -4,7 +4,7 @@ import { ScrollView, Text, View } from 'react-native';
 
 import { Button } from '@/components/Button';
 import { VideoPlayer } from '@/components/VideoPlayer';
-import type { Video } from '@/features/videos/schema';
+import type { Video } from '@/features/videos/types';
 
 type Props = { video: Video; player: Player; onEdit: () => void };
 

@@ -1,8 +1,8 @@
 import { useMutation } from '@tanstack/react-query';
-import { trimVideo } from 'expo-trim-video';
 import { File, Paths } from 'expo-file-system';
+import { trimVideo } from 'expo-trim-video';
 
-import { CLIP_SECONDS } from '@/features/videos/schema';
+import { CLIP_SECONDS } from './constants';
 
 /** Trims the clip, then moves it from the temp location into the app's document directory. */
 export const useTrimVideo = () =>

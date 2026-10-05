@@ -23,12 +23,3 @@ export function validateMetadata(
     errors: { name: f.name?.[0] as ValidationKey, description: f.description?.[0] as ValidationKey },
   };
 }
-
-export type Video = Metadata & {
-  id: number;
-  uri: string;
-  startSec: number;
-  createdAt: string;
-};
-
-export const CLIP_SECONDS = 5;

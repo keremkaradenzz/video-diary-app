@@ -1,11 +1,11 @@
 import { router } from 'expo-router';
 
+import { useTrimVideo } from '@/features/crop/queries';
 import { useCropStore } from '@/features/crop/store';
 import { useMetadataForm } from '@/features/videos/hooks/useMetadataForm';
 import { useSaveVideo } from '@/features/videos/queries';
 
 import { useRequireSource } from './useRequireSource';
-import { useTrimVideo } from './useTrimVideo';
 
 /** Final step: validate metadata, trim the clip, save it, close the modal. */
 export function useMetadataStep() {

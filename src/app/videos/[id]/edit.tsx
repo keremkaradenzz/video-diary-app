@@ -5,7 +5,7 @@ import { Notice } from '@/components/Notice';
 import { MetadataForm } from '@/features/videos/components/MetadataForm';
 import { useEditVideo } from '@/features/videos/hooks/useEditVideo';
 import { useRouteVideo } from '@/features/videos/hooks/useRouteVideo';
-import type { Video } from '@/features/videos/schema';
+import type { Video } from '@/features/videos/types';
 
 export default function EditVideoScreen() {
   const { t } = useTranslation();

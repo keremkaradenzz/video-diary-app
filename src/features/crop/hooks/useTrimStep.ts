@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 
+import { CLIP_SECONDS } from '@/features/crop/constants';
 import { useCropStore } from '@/features/crop/store';
-import { CLIP_SECONDS } from '@/features/videos/schema';
 import { useClipPlayer } from '@/hooks/useClipPlayer';
 
 import { useRequireSource } from './useRequireSource';

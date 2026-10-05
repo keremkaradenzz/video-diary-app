@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 
 import { useUpdateMetadata } from '@/features/videos/queries';
-import type { Video } from '@/features/videos/schema';
+import type { Video } from '@/features/videos/types';
 
 import { useMetadataForm } from './useMetadataForm';
 

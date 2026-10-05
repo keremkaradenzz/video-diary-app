@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useCropStore } from '@/features/crop/store';
-import { CLIP_SECONDS } from '@/features/videos/schema';
+import { CLIP_SECONDS } from '@/features/crop/constants';
 
 export function useSelectStep() {
   const { t } = useTranslation();

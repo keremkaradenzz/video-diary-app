@@ -4,7 +4,7 @@ import { View } from 'react-native';
 
 import { Button } from '@/components/Button';
 import { Notice } from '@/components/Notice';
-import type { Video } from '@/features/videos/schema';
+import type { Video } from '@/features/videos/types';
 
 import { VideoListItem } from './VideoListItem';
 

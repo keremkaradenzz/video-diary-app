@@ -7,7 +7,7 @@ export function useVideoList() {
   return {
     videos: data ?? [],
     isLoading: isPending,
-    onSelect: (id: number) => router.push({ pathname: '/video/[id]', params: { id } }),
+    onSelect: (id: number) => router.push({ pathname: '/videos/[id]', params: { id } }),
     onCreate: () => router.push('/crop'),
   };
 }

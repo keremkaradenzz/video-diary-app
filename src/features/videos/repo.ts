@@ -1,6 +1,7 @@
 import { getDb } from '@/lib/db';
 
-import type { Metadata, Video } from './schema';
+import type { Metadata } from './schema';
+import type { Video } from './types';
 
 type Row = {
   id: number;

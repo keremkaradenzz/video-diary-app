@@ -1,7 +1,7 @@
 import { Pressable, Text } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
-import type { Video } from '@/features/videos/schema';
+import type { Video } from '@/features/videos/types';
 
 type Props = { video: Video; index: number; onPress: () => void };
 
