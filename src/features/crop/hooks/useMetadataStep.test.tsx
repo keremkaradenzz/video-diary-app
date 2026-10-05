@@ -4,6 +4,7 @@ import { trimVideo } from 'expo-trim-video';
 
 import { useCropStore } from '@/features/crop/store';
 import { insertVideo } from '@/features/videos/repo';
+import i18n from '@/i18n';
 import { createQueryWrapper } from '@/test/queryWrapper';
 
 import { useMetadataStep } from './useMetadataStep';
@@ -34,6 +35,7 @@ const mockedInsert = jest.mocked(insertVideo);
 const setup = () => renderHook(() => useMetadataStep(), { wrapper: createQueryWrapper() });
 
 describe('useMetadataStep', () => {
+  beforeAll(() => i18n.changeLanguage('en'));
   beforeEach(() => {
     jest.clearAllMocks();
     useCropStore.getState().reset();
@@ -74,6 +76,19 @@ describe('useMetadataStep', () => {
     act(() => result.current.form.onSubmit());
     expect(result.current.form.errors.name).toBe('validation.nameRequired');
     expect(mockedTrim).not.toHaveBeenCalled();
+    expect(mockedInsert).not.toHaveBeenCalled();
+  });
+
+  it('explains that a development build is needed when the native module is missing', async () => {
+    mockedTrim.mockRejectedValue(Object.assign(new Error('missing'), { code: 'TRIM_UNAVAILABLE' }));
+    const { result } = setup();
+
+    act(() => result.current.form.onChangeName('Trip'));
+    act(() => result.current.form.onSubmit());
+
+    await waitFor(() =>
+      expect(result.current.error).toBe('Cropping needs a development build and does not work in Expo Go.'),
+    );
     expect(mockedInsert).not.toHaveBeenCalled();
   });
 
