@@ -8,7 +8,7 @@ import { createQueryWrapper } from '@/test/queryWrapper';
 import { useEditVideo } from './useEditVideo';
 
 jest.mock('expo-router', () => ({
-  router: { push: jest.fn(), replace: jest.fn(), back: jest.fn(), dismissAll: jest.fn() },
+  router: { push: jest.fn(), replace: jest.fn(), back: jest.fn(), dismissTo: jest.fn() },
 }));
 jest.mock('@/features/videos/repo', () => ({
   insertVideo: jest.fn(),

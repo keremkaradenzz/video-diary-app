@@ -9,7 +9,7 @@ import { useSelectStep } from './useSelectStep';
 
 jest.mock('expo-image-picker', () => ({ launchImageLibraryAsync: jest.fn() }));
 jest.mock('expo-router', () => ({
-  router: { push: jest.fn(), replace: jest.fn(), back: jest.fn(), dismissAll: jest.fn() },
+  router: { push: jest.fn(), replace: jest.fn(), back: jest.fn(), dismissTo: jest.fn() },
 }));
 
 const pick = jest.mocked(ImagePicker.launchImageLibraryAsync);

@@ -23,7 +23,7 @@ export function useMetadataStep() {
     try {
       const { uri } = await trim.mutateAsync({ uri: sourceUri, start: startSec });
       await save.mutateAsync({ ...m, uri, startSec });
-      router.dismissAll();
+      router.dismissTo('/');
     } catch {
       // surfaced through the mutations' error state
     }

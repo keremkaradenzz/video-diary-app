@@ -12,7 +12,7 @@ import { useMetadataStep } from './useMetadataStep';
 const mockCopy = jest.fn();
 
 jest.mock('expo-router', () => ({
-  router: { push: jest.fn(), replace: jest.fn(), back: jest.fn(), dismissAll: jest.fn() },
+  router: { push: jest.fn(), replace: jest.fn(), back: jest.fn(), dismissTo: jest.fn() },
 }));
 jest.mock('expo-trim-video', () => ({ trimVideo: jest.fn() }));
 jest.mock('expo-file-system', () => ({
@@ -60,7 +60,7 @@ describe('useMetadataStep', () => {
     });
     act(() => result.current.form.onSubmit());
 
-    await waitFor(() => expect(router.dismissAll).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(router.dismissTo).toHaveBeenCalledWith('/'));
     expect(mockedTrim).toHaveBeenCalledWith({ uri: 'file:///a.mp4', start: 3, end: 8 });
     // TanStack Query passes a context object as the second argument, so check only the first.
     expect(mockedInsert.mock.calls[0][0]).toEqual({
@@ -101,6 +101,6 @@ describe('useMetadataStep', () => {
 
     await waitFor(() => expect(result.current.error).toBe('boom'));
     expect(mockedInsert).not.toHaveBeenCalled();
-    expect(router.dismissAll).not.toHaveBeenCalled();
+    expect(router.dismissTo).not.toHaveBeenCalled();
   });
 });

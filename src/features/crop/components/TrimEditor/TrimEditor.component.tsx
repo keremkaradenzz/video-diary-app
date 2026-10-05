@@ -30,7 +30,7 @@ export function TrimEditor({ player, frames, duration, startSec, clipLength, onC
       <StepBar step={2} onBack={onBack} />
       <Text className={styles.title}>{t('crop.trimHeading', { seconds: clipLength })}</Text>
       <View className={styles.player}>
-        <VideoPlayer player={player} />
+        <VideoPlayer player={player} height={210} />
         <View className={styles.badge} pointerEvents="none">
           <Text className={styles.badgeText}>{t('crop.previewLabel', { seconds: clipLength })}</Text>
         </View>
