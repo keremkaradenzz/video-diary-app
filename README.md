@@ -48,12 +48,18 @@ src/
   features/
     crop/       components (SelectVideo, TrimEditor, Scrubber), hooks (one per step), store
     videos/     components (VideoList, VideoDetails, MetadataForm), hooks, schema, repo, queries
-  lib/db.ts     SQLite connection and schema
+  lib/          db.ts (SQLite connection and schema), i18n/ (setup and locales)
 ```
 
 `src/architecture.test.ts` fails if a presentational component imports the router, store, queries, SQLite or a hook, or if a container reaches into the data layer directly.
 
 Trimmed clips are copied into the app's document directory and listed from SQLite.
+
+## i18n
+
+All UI text lives in `src/lib/i18n/locales/` (`en.ts`, `tr.ts`) and is read with `t('section.key')` from `react-i18next`. The language follows the device (English if unsupported). `t()` keys are type-checked against `en.ts`, and `tr.ts` is typed as `typeof en`, so a missing key fails `npm run typecheck`. Validation errors from Zod are keys (`validation.*`) translated by the form.
+
+To add a language: create `locales/<code>.ts` typed as `typeof en` and register it in `src/lib/i18n/index.ts`.
 
 ## Commit messages
 

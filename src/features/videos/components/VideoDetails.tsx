@@ -1,4 +1,5 @@
 import type { VideoPlayer as Player } from 'expo-video';
+import { useTranslation } from 'react-i18next';
 import { ScrollView, Text, View } from 'react-native';
 
 import { Button } from '@/components/ui/Button';
@@ -8,6 +9,7 @@ import type { Video } from '@/features/videos/schema';
 type Props = { video: Video; player: Player; onEdit: () => void };
 
 export function VideoDetails({ video, player, onEdit }: Props) {
+  const { t } = useTranslation();
   return (
     <ScrollView>
       <VideoPlayer player={player} />
@@ -15,7 +17,7 @@ export function VideoDetails({ video, player, onEdit }: Props) {
         <Text className="text-2xl font-bold">{video.name}</Text>
         {!!video.description && <Text className="text-base text-gray-700">{video.description}</Text>}
         <View className="mt-4">
-          <Button label="Edit" onPress={onEdit} />
+          <Button label={t('details.edit')} onPress={onEdit} />
         </View>
       </View>
     </ScrollView>

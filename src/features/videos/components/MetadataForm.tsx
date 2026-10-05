@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Text, TextInput, View } from 'react-native';
 
 import { Button } from '@/components/ui/Button';
@@ -16,28 +17,29 @@ type Props = {
 };
 
 export function MetadataForm(p: Props) {
+  const { t } = useTranslation();
   return (
     <View className="gap-4 p-4">
       <View className="gap-1">
         <TextInput
           value={p.name}
           onChangeText={p.onChangeName}
-          placeholder="Name"
+          placeholder={t('form.name')}
           maxLength={80}
           className="rounded-lg border border-gray-300 px-3 py-3 text-base"
         />
-        {p.errors.name && <Text className="text-sm text-red-600">{p.errors.name}</Text>}
+        {p.errors.name && <Text className="text-sm text-red-600">{t(p.errors.name)}</Text>}
       </View>
       <View className="gap-1">
         <TextInput
           value={p.description}
           onChangeText={p.onChangeDescription}
-          placeholder="Description"
+          placeholder={t('form.description')}
           multiline
           textAlignVertical="top"
           className="h-32 rounded-lg border border-gray-300 px-3 py-3 text-base"
         />
-        {p.errors.description && <Text className="text-sm text-red-600">{p.errors.description}</Text>}
+        {p.errors.description && <Text className="text-sm text-red-600">{t(p.errors.description)}</Text>}
       </View>
       {p.error && <Text className="text-sm text-red-600">{p.error}</Text>}
       <Button label={p.submitLabel} onPress={p.onSubmit} loading={p.loading} />

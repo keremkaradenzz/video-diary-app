@@ -12,8 +12,8 @@ describe('validateMetadata', () => {
     const res = validateMetadata({ name: '', description: 'x'.repeat(501) });
     expect(res).toMatchObject({ ok: false });
     if (!res.ok) {
-      expect(res.errors.name).toBe('Name is required');
-      expect(res.errors.description).toBe('Max 500 characters');
+      expect(res.errors.name).toBe('validation.nameRequired');
+      expect(res.errors.description).toBe('validation.descriptionMax');
     }
   });
 });
