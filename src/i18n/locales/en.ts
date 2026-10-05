@@ -24,6 +24,7 @@ export const en = {
     cropAndSave: 'Crop & save',
     range: '{{start}}s – {{end}}s of {{total}}s',
     tooShort: 'Video must be at least {{seconds}} seconds long.',
+    trimUnavailable: 'Cropping needs a development build and does not work in Expo Go.',
   },
   form: {
     name: 'Name',

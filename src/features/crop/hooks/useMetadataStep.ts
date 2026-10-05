@@ -1,6 +1,7 @@
 import { router } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 
-import { useTrimVideo } from '@/features/crop/queries';
+import { isTrimUnavailable, useTrimVideo } from '@/features/crop/queries';
 import { useCropStore } from '@/features/crop/store';
 import { useMetadataForm } from '@/features/videos/hooks/useMetadataForm';
 import { useSaveVideo } from '@/features/videos/queries';
@@ -9,6 +10,7 @@ import { useRequireSource } from './useRequireSource';
 
 /** Final step: validate metadata, trim the clip, save it, close the modal. */
 export function useMetadataStep() {
+  const { t } = useTranslation();
   const sourceUri = useRequireSource();
   const startSec = useCropStore((s) => s.startSec);
   const trim = useTrimVideo();
@@ -29,6 +31,8 @@ export function useMetadataStep() {
     ready: !!sourceUri,
     form,
     isLoading: trim.isPending || save.isPending,
-    error: trim.error?.message ?? save.error?.message ?? null,
+    error: isTrimUnavailable(trim.error)
+      ? t('crop.trimUnavailable')
+      : (trim.error?.message ?? save.error?.message ?? null),
   };
 }

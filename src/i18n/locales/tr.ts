@@ -27,6 +27,7 @@ export const tr: typeof en = {
     cropAndSave: 'Kırp ve kaydet',
     range: '{{start}} sn – {{end}} sn / {{total}} sn',
     tooShort: 'Video en az {{seconds}} saniye uzunluğunda olmalı.',
+    trimUnavailable: "Kırpma için geliştirme build'i gerekir, Expo Go'da çalışmaz.",
   },
   form: {
     name: 'Ad',
