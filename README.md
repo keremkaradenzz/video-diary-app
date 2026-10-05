@@ -15,6 +15,8 @@ npx expo run:ios      # or: npx expo run:android
 
 `expo-trim-video` is a native module, so the app needs a **development build**. Expo Go will not work.
 
+The app targets **iOS and Android only** (`platforms` in `app.json`). Web is disabled on purpose: `expo-trim-video` has no web implementation, and `expo-sqlite` on web needs extra wasm and header setup.
+
 Scripts: `npm test`, `npm run typecheck`, `npm run lint`.
 
 ## Usage
