@@ -1,6 +1,7 @@
 import { FlashList } from '@shopify/flash-list';
 import { router } from 'expo-router';
 import { ActivityIndicator, Pressable, Text, View } from 'react-native';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 
 import { useVideos } from '@/features/videos/queries';
 
@@ -16,7 +17,8 @@ export default function Home() {
         keyExtractor={(v) => String(v.id)}
         contentContainerClassName="p-4"
         ListEmptyComponent={<Text className="mt-20 text-center text-gray-500">No videos yet.</Text>}
-        renderItem={({ item }) => (
+        renderItem={({ item, index }) => (
+          <Animated.View entering={FadeInDown.delay(Math.min(index, 8) * 40)}>
           <Pressable
             onPress={() => router.push({ pathname: '/video/[id]', params: { id: item.id } })}
             className="mb-3 rounded-lg border border-gray-200 p-4 active:opacity-70">
@@ -27,6 +29,7 @@ export default function Home() {
               </Text>
             )}
           </Pressable>
+          </Animated.View>
         )}
       />
       <Pressable
