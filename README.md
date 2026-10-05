@@ -24,17 +24,34 @@ Scripts: `npm test`, `npm run typecheck`, `npm run lint`.
 3. Tap **Next**, enter a name and description, then tap **Crop & save**.
 4. Open a video from the list to see its details. Tap **Edit** to change its name or description.
 
-## Structure
+## Architecture
+
+Container/Presentational for screens, Hooks for logic.
+
+```
+route (container)  ->  controller hook  ->  data hooks / store / repo
+       |
+       +--------->  presentational component (props in, JSX out)
+```
+
+| Layer | Where | May use |
+|---|---|---|
+| Container | `src/app/**` (route files, ~10 lines) | controller hooks, view components |
+| Controller hook | `src/features/*/hooks/` | router, store, queries, other hooks |
+| Data hooks | `src/features/videos/queries.ts`, `crop/store.ts` | repo, TanStack Query, Zustand |
+| Presentational | `src/components/**`, `src/features/*/components/` | props only; no router, store, queries, SQLite |
 
 ```
 src/
-  app/          Expo Router screens (/, /video/[id], /edit/[id], /crop/*)
-  components/   VideoPlayer, Scrubber, MetadataForm
+  app/          containers: /, /video/[id], /edit/[id], /crop/*
+  components/   shared UI: Button, Feedback, VideoPlayer
   features/
-    crop/       Zustand store for the crop flow, trimVideo mutation
-    videos/     Zod schema, SQLite repo, TanStack Query hooks
+    crop/       components (SelectVideo, TrimEditor, Scrubber), hooks (one per step), store
+    videos/     components (VideoList, VideoDetails, MetadataForm), hooks, schema, repo, queries
   lib/db.ts     SQLite connection and schema
 ```
+
+`src/architecture.test.ts` fails if a presentational component imports the router, store, queries, SQLite or a hook, or if a container reaches into the data layer directly.
 
 Trimmed clips are copied into the app's document directory and listed from SQLite.
 
