@@ -2,8 +2,8 @@ import { FlashList } from '@shopify/flash-list';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
-import { Button } from '@/components/ui/Button';
-import { Notice } from '@/components/ui/Feedback';
+import { Button } from '@/components/Button';
+import { Notice } from '@/components/Notice';
 import type { Video } from '@/features/videos/schema';
 
 import { VideoListItem } from './VideoListItem';

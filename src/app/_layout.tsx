@@ -14,7 +14,7 @@ export default function RootLayout() {
       <Stack>
         <Stack.Screen name="index" options={{ title: t('home.title') }} />
         <Stack.Screen name="video/[id]" options={{ title: t('details.title') }} />
-        <Stack.Screen name="edit/[id]" options={{ title: t('edit.title'), presentation: 'modal' }} />
+        <Stack.Screen name="video/[id]/edit" options={{ title: t('edit.title'), presentation: 'modal' }} />
         <Stack.Screen name="crop" options={{ headerShown: false, presentation: 'modal' }} />
       </Stack>
     </QueryClientProvider>

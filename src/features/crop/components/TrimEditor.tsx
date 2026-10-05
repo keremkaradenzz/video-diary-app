@@ -2,7 +2,7 @@ import type { VideoPlayer as Player } from 'expo-video';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/Button';
 import { VideoPlayer } from '@/components/VideoPlayer';
 
 import { Scrubber } from './Scrubber';

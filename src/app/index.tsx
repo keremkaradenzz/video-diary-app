@@ -1,4 +1,4 @@
-import { Loader } from '@/components/ui/Feedback';
+import { Loader } from '@/components/Loader';
 import { VideoList } from '@/features/videos/components/VideoList';
 import { useVideoList } from '@/features/videos/hooks/useVideoList';
 

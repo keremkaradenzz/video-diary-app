@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useCropStore } from '@/features/crop/store';
 import { CLIP_SECONDS } from '@/features/videos/schema';
 
-export function useSelectVideo() {
+export function useSelectStep() {
   const { t } = useTranslation();
   const setSource = useCropStore((s) => s.setSource);
   const [error, setError] = useState<string | null>(null);

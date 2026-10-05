@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/Button';
 
 type Props = { onPick: () => void; error: string | null };
 

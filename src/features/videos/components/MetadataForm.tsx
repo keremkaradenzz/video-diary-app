@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Text, TextInput, View } from 'react-native';
 
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/Button';
 import type { MetadataErrors } from '@/features/videos/schema';
 
 type Props = {

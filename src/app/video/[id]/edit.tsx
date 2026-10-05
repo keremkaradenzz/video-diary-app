@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 
-import { Loader, Notice } from '@/components/ui/Feedback';
+import { Loader } from '@/components/Loader';
+import { Notice } from '@/components/Notice';
 import { MetadataForm } from '@/features/videos/components/MetadataForm';
 import { useEditVideo } from '@/features/videos/hooks/useEditVideo';
 import { useRouteVideo } from '@/features/videos/hooks/useRouteVideo';
