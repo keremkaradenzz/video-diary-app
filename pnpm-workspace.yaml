@@ -1,0 +1,5 @@
+# Settings only; this is not a monorepo. See .npmrc for the same setting on older pnpm versions.
+nodeLinker: hoisted
+# pnpm 10 skips dependency install scripts unless listed; this one is the ESLint resolver's native fallback.
+onlyBuiltDependencies:
+  - unrs-resolver

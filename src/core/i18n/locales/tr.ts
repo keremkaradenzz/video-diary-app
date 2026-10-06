@@ -9,6 +9,11 @@ export const tr: typeof en = {
     play: 'Oynat',
     pause: 'Duraklat',
   },
+  error: {
+    title: 'Bir şeyler ters gitti',
+    hint: 'Uygulama beklenmeyen bir sorunla karşılaştı. Tekrar deneyebilirsiniz.',
+    retry: 'Tekrar dene',
+  },
   home: {
     title: 'Video Günlüğü',
     empty: 'Henüz video yok.',

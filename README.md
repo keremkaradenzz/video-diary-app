@@ -9,9 +9,16 @@ Expo (SDK 57) · Expo Router · Zustand · TanStack Query · expo-trim-video · 
 ## Setup
 
 ```bash
+# npm
 npm install
 npx expo run:ios      # or: npx expo run:android
+
+# pnpm (Node 18.12+ for pnpm 10; the latest pnpm needs Node 22.13+)
+pnpm install
+pnpm exec expo run:ios      # or: pnpm exec expo run:android
 ```
+
+Both lockfiles are committed (`package-lock.json`, `pnpm-lock.yaml`); use whichever you prefer. pnpm is set to a flat `node_modules` (`.npmrc`, `pnpm-workspace.yaml`) because Metro and React Native libraries expect it. Add packages with `npx expo install --npm <package>` or `pnpm exec expo install --pnpm <package>` and the matching lockfile updates; the other one needs the same change (run `npm install --package-lock-only` or `pnpm install --lockfile-only`). Scripts such as `npm test` work the same with `pnpm test`.
 
 `expo-trim-video` is a native module, so the app needs a **development build**. Expo Go will not work.
 
@@ -123,7 +130,6 @@ The 5-second length is fixed, so the scrubber is a single slider for the start p
 
 ## Tooling
 
-- **CI:** `.github/workflows/ci.yml` runs format check, lint, typecheck and tests on every push to `main` and every pull request.
 - **Builds:** `eas.json` defines `development` (dev client), `preview` and `production` profiles: `bunx eas-cli build --profile development` (or `npx eas-cli@latest build ...`).
 - **Commits:** see below; a husky hook enforces them locally.
 

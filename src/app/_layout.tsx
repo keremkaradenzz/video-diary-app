@@ -2,15 +2,18 @@ import '@/core/i18n';
 import '../global.css';
 
 import { QueryClientProvider } from '@tanstack/react-query';
-import { Stack } from 'expo-router';
+import { Stack, type ErrorBoundaryProps } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 
 import { getDb } from '@/core/db';
 import { queryClient } from '@/core/query';
 import { theme } from '@/core/theme';
+import { ErrorFallback } from '@/shared/ui/ErrorFallback';
 
-// Route errors render expo-router's default fallback instead of a white screen.
-export { ErrorBoundary } from 'expo-router';
+// A render error in any route shows this instead of a white screen; `retry` re-renders the route.
+export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
+  return <ErrorFallback detail={__DEV__ ? error.message : undefined} onRetry={() => void retry()} />;
+}
 
 // Keep the splash screen up until SQLite is open, so the list never starts with a spinner.
 void SplashScreen.preventAutoHideAsync();

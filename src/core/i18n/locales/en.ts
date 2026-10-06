@@ -6,6 +6,11 @@ export const en = {
     play: 'Play',
     pause: 'Pause',
   },
+  error: {
+    title: 'Something went wrong',
+    hint: 'The app hit an unexpected problem. You can try again.',
+    retry: 'Try again',
+  },
   home: {
     title: 'Video Diary',
     empty: 'No videos yet.',
