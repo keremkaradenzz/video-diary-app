@@ -1,3 +1,4 @@
+import { Image, type ImageRef } from 'expo-image';
 import { createVideoPlayer, type VideoThumbnail } from 'expo-video';
 
 // One native player at a time: a long list must not open dozens of decoders at once.
@@ -27,4 +28,18 @@ export function generateThumbnails(uri: string, times: number[], maxWidth = 240)
   const run = queue.then(() => generate(uri, times, maxWidth));
   queue = run.catch(() => undefined);
   return run;
+}
+
+/**
+ * Like `generateThumbnails` for a single frame, but kept in expo-image's disk cache under `key`,
+ * so a later launch reads it instead of decoding the video again. The cache may be evicted by the
+ * OS; a miss simply regenerates the frame.
+ */
+export async function cachedThumbnail(key: string, uri: string, time = 0): Promise<VideoThumbnail | null> {
+  // Both are native image refs and are only ever used as an <Image source>.
+  const hit = await Image.readFromCacheAsync(key).catch(() => null);
+  if (hit) return hit as unknown as VideoThumbnail;
+  const [thumb] = await generateThumbnails(uri, [time]);
+  if (thumb) await Image.writeToCacheAsync(thumb as unknown as ImageRef, key).catch(() => undefined);
+  return thumb ?? null;
 }

@@ -1,8 +1,8 @@
 import { useInfiniteQuery, useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { UseQueryResult } from '@tanstack/react-query';
+import type { InfiniteData, UseQueryResult } from '@tanstack/react-query';
 import type { VideoThumbnail } from 'expo-video';
 
-import { generateThumbnails } from '@/shared/utils/thumbnails';
+import { cachedThumbnail } from '@/shared/utils/thumbnails';
 
 import { countVideos, getVideo, insertVideo, listVideos, PAGE_SIZE, updateMetadata } from './repo';
 import type { Metadata } from './schema';
@@ -36,7 +36,9 @@ export function useSaveVideo() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: insertVideo,
-    onSuccess: () => qc.invalidateQueries({ queryKey: keys.all }),
+    // A new row shifts every page offset: reset the list to its first page instead of refetching all.
+    onSuccess: () =>
+      Promise.all([qc.resetQueries({ queryKey: keys.list }), qc.invalidateQueries({ queryKey: keys.count })]),
   });
 }
 
@@ -44,7 +46,15 @@ export function useUpdateMetadata(id: number) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (m: Metadata) => updateMetadata(id, m),
-    onSuccess: () => qc.invalidateQueries({ queryKey: keys.all }),
+    // Patch the cached copies in place; no row moves, so nothing needs refetching.
+    onSuccess: (_, m) => {
+      const patch = (v: Video) => (v.id === id ? { ...v, ...m } : v);
+      qc.setQueryData<Video | null>(keys.one(id), (v) => v && patch(v));
+      qc.setQueryData<InfiniteData<Video[]>>(
+        keys.list,
+        (d) => d && { ...d, pages: d.pages.map((page) => page.map(patch)) },
+      );
+    },
   });
 }
 
@@ -66,7 +76,7 @@ export function useThumbnails(videos: Video[], visibleIds: number[]) {
       enabled: visibleIds.includes(v.id),
       queryFn: async (): Promise<ThumbnailResult> => ({
         id: v.id,
-        thumbnail: (await generateThumbnails(v.uri, [0]))[0] ?? null,
+        thumbnail: await cachedThumbnail(`clip-thumb:${v.uri}`, v.uri),
       }),
     })),
     combine: toThumbnailMap,
