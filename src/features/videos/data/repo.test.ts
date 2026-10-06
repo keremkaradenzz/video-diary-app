@@ -2,7 +2,7 @@ const mockDb = { getAllAsync: jest.fn(), getFirstAsync: jest.fn(), runAsync: jes
 
 jest.mock('@/core/db', () => ({ getDb: () => Promise.resolve(mockDb) }));
 
-import { getVideo, insertVideo, listVideos, updateMetadata } from './repo';
+import { countVideos, getVideo, insertVideo, listVideos, PAGE_SIZE, updateMetadata } from './repo';
 
 const row = {
   id: 1,
@@ -21,6 +21,23 @@ describe('videos repo', () => {
     expect(await listVideos()).toEqual([
       { id: 1, name: 'a', description: '', uri: 'file:///a.mp4', startSec: 2.5, createdAt: row.created_at },
     ]);
+  });
+
+  it('asks for one page at a time, newest first', async () => {
+    mockDb.getAllAsync.mockResolvedValue([]);
+    await listVideos(40);
+    expect(mockDb.getAllAsync).toHaveBeenCalledWith(
+      expect.stringMatching(/ORDER BY created_at DESC, id DESC LIMIT \? OFFSET \?/),
+      PAGE_SIZE,
+      40,
+    );
+  });
+
+  it('countVideos returns the row count, 0 for an empty table', async () => {
+    mockDb.getFirstAsync.mockResolvedValueOnce({ n: 42 });
+    expect(await countVideos()).toBe(42);
+    mockDb.getFirstAsync.mockResolvedValueOnce(null);
+    expect(await countVideos()).toBe(0);
   });
 
   it('getVideo returns null when missing', async () => {

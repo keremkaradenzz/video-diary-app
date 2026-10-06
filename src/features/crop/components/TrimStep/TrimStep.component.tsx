@@ -18,6 +18,7 @@ type Props = {
   startSec: number;
   clipLength: number;
   onChangeStart: (start: number) => void;
+  onCommitStart: (start: number) => void;
   onNext: () => void;
   onBack: () => void;
 };
@@ -29,6 +30,7 @@ export function TrimStep({
   startSec,
   clipLength,
   onChangeStart,
+  onCommitStart,
   onNext,
   onBack,
 }: Props) {
@@ -44,7 +46,13 @@ export function TrimStep({
         </View>
       </View>
       <Filmstrip frames={frames} duration={duration} start={startSec} clipLength={clipLength} />
-      <Scrubber duration={duration} start={startSec} clipLength={clipLength} onChange={onChangeStart} />
+      <Scrubber
+        duration={duration}
+        start={startSec}
+        clipLength={clipLength}
+        onChange={onChangeStart}
+        onCommit={onCommitStart}
+      />
       <View className={styles.spacer} />
       <Button label={t('crop.next')} onPress={onNext} />
     </Screen>

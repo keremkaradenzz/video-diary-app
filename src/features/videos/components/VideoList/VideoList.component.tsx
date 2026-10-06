@@ -1,4 +1,4 @@
-import { FlashList } from '@shopify/flash-list';
+import { FlashList, type ViewToken } from '@shopify/flash-list';
 import type { VideoThumbnail } from 'expo-video';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
@@ -12,14 +12,30 @@ import { styles } from './videoList.styles';
 
 type Props = {
   videos: Video[];
-  thumbnails: Record<number, VideoThumbnail | undefined>;
+  /** Total number of saved clips, which can exceed the `videos` loaded so far. */
+  total: number;
+  thumbnails: Record<number, VideoThumbnail | null | undefined>;
   /** Length of every saved clip, in seconds. */
   clipSeconds: number;
   onSelect: (id: number) => void;
+  onEndReached: () => void;
+  onViewableItemsChanged: (info: { viewableItems: ViewToken<Video>[] }) => void;
   onCreate: () => void;
 };
 
-export function VideoList({ videos, thumbnails, clipSeconds, onSelect, onCreate }: Props) {
+// A row counts as visible as soon as any part of it shows, so its frame starts loading early.
+const VIEWABILITY = { itemVisiblePercentThreshold: 1 };
+
+export function VideoList({
+  videos,
+  total,
+  thumbnails,
+  clipSeconds,
+  onSelect,
+  onEndReached,
+  onViewableItemsChanged,
+  onCreate,
+}: Props) {
   const { t } = useTranslation();
   return (
     <Screen>
@@ -27,16 +43,20 @@ export function VideoList({ videos, thumbnails, clipSeconds, onSelect, onCreate 
         data={videos}
         maintainVisibleContentPosition={{ disabled: true }}
         extraData={thumbnails}
+        onEndReached={onEndReached}
+        onEndReachedThreshold={0.5}
+        onViewableItemsChanged={onViewableItemsChanged}
+        viewabilityConfig={VIEWABILITY}
         keyExtractor={(v) => String(v.id)}
         contentContainerClassName={styles.content}
         ListHeaderComponent={
           <View className={styles.header}>
             <Text className={styles.title}>{t('home.title')}</Text>
-            {videos.length > 0 && (
+            {total > 0 && (
               <Text className={styles.summary}>
                 {t('home.summary', {
-                  count: videos.length,
-                  seconds: videos.length * clipSeconds,
+                  count: total,
+                  seconds: total * clipSeconds,
                 })}
               </Text>
             )}
@@ -52,7 +72,7 @@ export function VideoList({ videos, thumbnails, clipSeconds, onSelect, onCreate 
           <VideoListItem
             video={item}
             index={index}
-            thumbnail={thumbnails[item.id]}
+            thumbnail={thumbnails[item.id] ?? undefined}
             duration={`0:${String(clipSeconds).padStart(2, '0')}`}
             onPress={() => onSelect(item.id)}
           />

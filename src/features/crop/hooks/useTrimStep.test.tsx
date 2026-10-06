@@ -24,7 +24,7 @@ describe('useTrimStep', () => {
     expect(router.replace).toHaveBeenCalledWith('/crop');
   });
 
-  it('loops a 5s window that follows the scrubber', () => {
+  it('loops a 5s window that follows the committed scrubber value', () => {
     useCropStore.getState().setSource('file:///a.mp4', 20);
     const { result } = renderHook(() => useTrimStep());
 
@@ -32,10 +32,21 @@ describe('useTrimStep', () => {
     expect(router.replace).not.toHaveBeenCalled();
     expect(useClipPlayer).toHaveBeenLastCalledWith('file:///a.mp4', { start: 0, length: 5 });
 
-    act(() => result.current.onChangeStart(4));
+    act(() => result.current.onCommitStart(4));
 
     expect(result.current.startSec).toBe(4);
     expect(useClipPlayer).toHaveBeenLastCalledWith('file:///a.mp4', { start: 4, length: 5 });
+  });
+
+  it('only updates the displayed start while dragging, not the store or the player', () => {
+    useCropStore.getState().setSource('file:///a.mp4', 20);
+    const { result } = renderHook(() => useTrimStep());
+
+    act(() => result.current.onChangeStart(3));
+
+    expect(result.current.startSec).toBe(3);
+    expect(useCropStore.getState().startSec).toBe(0);
+    expect(useClipPlayer).toHaveBeenLastCalledWith('file:///a.mp4', { start: 0, length: 5 });
   });
 
   it('opens the metadata step on next', () => {

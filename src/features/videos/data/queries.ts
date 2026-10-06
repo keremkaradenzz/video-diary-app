@@ -1,13 +1,34 @@
-import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
+import type { UseQueryResult } from '@tanstack/react-query';
+import type { VideoThumbnail } from 'expo-video';
 
-import { getVideo, insertVideo, listVideos, updateMetadata } from './repo';
-import type { Metadata } from './schema';
-import type { Video } from './types';
 import { generateThumbnails } from '@/shared/utils/thumbnails';
 
-const keys = { all: ['videos'] as const, one: (id: number) => ['videos', id] as const };
+import { countVideos, getVideo, insertVideo, listVideos, PAGE_SIZE, updateMetadata } from './repo';
+import type { Metadata } from './schema';
+import type { Video } from './types';
 
-export const useVideos = () => useQuery({ queryKey: keys.all, queryFn: listVideos });
+const keys = {
+  all: ['videos'] as const,
+  list: ['videos', 'list'] as const,
+  count: ['videos', 'count'] as const,
+  one: (id: number) => ['videos', id] as const,
+};
+
+// Module-level so React Query can memoise the flattened result between renders.
+const flatten = (data: { pages: Video[][] }) => data.pages.flat();
+
+/** Clips newest first, loaded one page at a time (`fetchNextPage` on scroll). */
+export const useVideos = () =>
+  useInfiniteQuery({
+    queryKey: keys.list,
+    queryFn: ({ pageParam }) => listVideos(pageParam),
+    initialPageParam: 0,
+    getNextPageParam: (last, pages) => (last.length === PAGE_SIZE ? pages.length * PAGE_SIZE : undefined),
+    select: flatten,
+  });
+
+export const useVideoCount = () => useQuery({ queryKey: keys.count, queryFn: countVideos });
 
 export const useVideo = (id: number) => useQuery({ queryKey: keys.one(id), queryFn: () => getVideo(id) });
 
@@ -27,14 +48,27 @@ export function useUpdateMetadata(id: number) {
   });
 }
 
-/** First frame of every clip by video id; `undefined` until generated (or if it failed). */
-export function useThumbnails(videos: Video[]) {
-  const results = useQueries({
+type ThumbnailResult = { id: number; thumbnail: VideoThumbnail | null };
+
+// Defined once so the combined map keeps its identity while no thumbnail changed.
+const toThumbnailMap = (results: UseQueryResult<ThumbnailResult>[]) =>
+  Object.fromEntries(results.flatMap((r) => (r.data ? [[r.data.id, r.data.thumbnail]] : [])));
+
+/**
+ * First frame of each clip by video id. Frames are generated only for the rows in `visibleIds`
+ * (disabled queries still return what is already cached), so a long list does not decode every video.
+ */
+export function useThumbnails(videos: Video[], visibleIds: number[]) {
+  return useQueries({
     queries: videos.map((v) => ({
       queryKey: ['thumbnail', v.uri],
       staleTime: Infinity,
-      queryFn: async () => (await generateThumbnails(v.uri, [0]))[0],
+      enabled: visibleIds.includes(v.id),
+      queryFn: async (): Promise<ThumbnailResult> => ({
+        id: v.id,
+        thumbnail: (await generateThumbnails(v.uri, [0]))[0] ?? null,
+      }),
     })),
+    combine: toThumbnailMap,
   });
-  return Object.fromEntries(videos.map((v, i) => [v.id, results[i].data]));
 }

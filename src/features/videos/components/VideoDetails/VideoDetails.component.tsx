@@ -6,6 +6,7 @@ import { Button } from '@/shared/components/Button';
 import { Screen } from '@/shared/components/Screen';
 import { ScreenHeader } from '@/shared/components/ScreenHeader';
 import { VideoPlayer } from '@/shared/components/VideoPlayer';
+import { formatDateTime } from '@/shared/utils/formatDate';
 import type { Video } from '@/features/videos/data/types';
 
 import { styles } from './videoDetails.styles';
@@ -33,7 +34,7 @@ export function VideoDetails({ video, player, clipSeconds, onEdit, onBack }: Pro
         <Text className={styles.title}>{video.name}</Text>
         <Text className={styles.meta}>
           {t('details.meta', {
-            date: new Date(video.createdAt).toLocaleString(),
+            date: formatDateTime(video.createdAt),
             seconds: clipSeconds,
           })}
         </Text>

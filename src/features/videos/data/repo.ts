@@ -21,10 +21,23 @@ const toVideo = (r: Row): Video => ({
   createdAt: r.created_at,
 });
 
-export async function listVideos(): Promise<Video[]> {
+export const PAGE_SIZE = 20;
+
+/** One page of clips, newest first. The `(created_at, id)` index serves the ORDER BY. */
+export async function listVideos(offset = 0, limit = PAGE_SIZE): Promise<Video[]> {
   const db = await getDb();
-  const rows = await db.getAllAsync<Row>('SELECT * FROM videos ORDER BY created_at DESC');
+  const rows = await db.getAllAsync<Row>(
+    'SELECT * FROM videos ORDER BY created_at DESC, id DESC LIMIT ? OFFSET ?',
+    limit,
+    offset,
+  );
   return rows.map(toVideo);
+}
+
+export async function countVideos(): Promise<number> {
+  const db = await getDb();
+  const row = await db.getFirstAsync<{ n: number }>('SELECT COUNT(*) AS n FROM videos');
+  return row?.n ?? 0;
 }
 
 export async function getVideo(id: number): Promise<Video | null> {

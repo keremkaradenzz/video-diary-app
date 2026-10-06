@@ -7,6 +7,8 @@ import { useCropStore } from '@/features/crop/data/store';
 import { useMetadataForm } from '@/features/videos/hooks/useMetadataForm';
 import { useSaveVideo } from '@/features/videos/data/queries';
 
+import { deleteIfCached } from '@/shared/utils/files';
+
 import { useRequireSource } from './useRequireSource';
 
 /** Final step: validate metadata, trim the clip, save it, close the modal. */
@@ -23,6 +25,7 @@ export function useMetadataStep() {
     try {
       const { uri } = await trim.mutateAsync({ uri: sourceUri, start: startSec });
       await save.mutateAsync({ ...m, uri, startSec });
+      deleteIfCached(sourceUri); // the picker's cache copy is no longer needed
       router.dismissTo('/');
     } catch {
       // surfaced through the mutations' error state

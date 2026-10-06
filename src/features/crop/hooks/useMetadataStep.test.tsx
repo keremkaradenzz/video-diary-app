@@ -9,17 +9,18 @@ import { createQueryWrapper } from '@/test/queryWrapper';
 
 import { useMetadataStep } from './useMetadataStep';
 
-const mockCopy = jest.fn();
+const mockMove = jest.fn();
 
 jest.mock('expo-router', () => ({
   router: { push: jest.fn(), replace: jest.fn(), back: jest.fn(), dismissTo: jest.fn() },
 }));
+jest.mock('@/shared/utils/files', () => ({ deleteIfCached: jest.fn() }));
 jest.mock('expo-trim-video', () => ({ trimVideo: jest.fn() }));
 jest.mock('expo-file-system', () => ({
   Paths: { document: 'doc' },
-  File: jest.fn().mockImplementation(function (this: { uri: string; copy: unknown }, ...parts: string[]) {
+  File: jest.fn().mockImplementation(function (this: { uri: string; move: unknown }, ...parts: string[]) {
     this.uri = `file:///${parts.join('/')}`;
-    this.copy = (...args: unknown[]) => mockCopy(...args);
+    this.move = (...args: unknown[]) => mockMove(...args);
   }),
 }));
 jest.mock('@/features/videos/data/repo', () => ({

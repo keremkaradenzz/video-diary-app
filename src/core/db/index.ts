@@ -14,6 +14,7 @@ export function getDb() {
         start_sec REAL NOT NULL,
         created_at TEXT NOT NULL
       );
+      CREATE INDEX IF NOT EXISTS idx_videos_created_at ON videos (created_at DESC, id DESC);
     `);
     return db;
   });

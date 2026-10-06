@@ -42,14 +42,14 @@ function loadTrimVideo() {
   }
 }
 
-/** Trims the clip, then moves it from the temp location into the app's document directory. */
+/** Trims the clip, then moves it (not copies) from the temp location into the app's document directory. */
 export const useTrimVideo = () =>
   useMutation({
     mutationFn: async ({ uri, start }: { uri: string; start: number }) => {
       const trimVideo = loadTrimVideo();
       const { uri: tmp } = await trimVideo({ uri, start, end: start + CLIP_SECONDS });
       const dest = new File(Paths.document, `clip-${Date.now()}.mp4`);
-      new File(tmp).copy(dest);
+      await new File(tmp).move(dest);
       return { uri: dest.uri };
     },
   });

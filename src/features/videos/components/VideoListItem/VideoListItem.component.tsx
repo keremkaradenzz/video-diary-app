@@ -3,6 +3,7 @@ import { Pressable, Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
 import { ClipThumbnail } from '@/shared/components/ClipThumbnail';
+import { formatDate } from '@/shared/utils/formatDate';
 import type { Video } from '@/features/videos/data/types';
 
 import { styles } from './videoListItem.styles';
@@ -29,7 +30,7 @@ export function VideoListItem({ video, thumbnail, index, duration, onPress }: Pr
               {video.description}
             </Text>
           )}
-          <Text className={styles.date}>{new Date(video.createdAt).toLocaleDateString()}</Text>
+          <Text className={styles.date}>{formatDate(video.createdAt)}</Text>
         </View>
         <Text className={styles.chevron}>›</Text>
       </Pressable>

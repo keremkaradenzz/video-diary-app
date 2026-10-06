@@ -14,7 +14,7 @@ export function useClipPlayer(uri: string | null | undefined, clip?: Clip) {
   const length = clip?.length;
   useEffect(() => {
     if (start === undefined || length === undefined) return;
-    player.timeUpdateEventInterval = 0.1;
+    player.timeUpdateEventInterval = 0.2;
     player.currentTime = start;
     const sub = player.addListener('timeUpdate', ({ currentTime }) => {
       if (currentTime >= start + length || currentTime < start - 0.5) player.currentTime = start;

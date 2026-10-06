@@ -10,16 +10,19 @@ type Props = {
   duration: number;
   start: number;
   clipLength: number;
+  /** Fires continuously while the slider is dragged. */
   onChange: (start: number) => void;
+  /** Fires once with the final value (slider released, or a nudge button). */
+  onCommit: (start: number) => void;
 };
 
 const fmt = (s: number) => `${Math.floor(s / 60)}:${(s % 60).toFixed(1).padStart(4, '0')}`;
 
 /** Picks the start of a fixed-length window inside the video; the end follows automatically. */
-export function Scrubber({ duration, start, clipLength, onChange }: Props) {
+export function Scrubber({ duration, start, clipLength, onChange, onCommit }: Props) {
   const { t } = useTranslation();
   const max = Math.max(duration - clipLength, 0);
-  const nudge = (d: number) => onChange(Math.min(Math.max(start + d, 0), max));
+  const nudge = (d: number) => onCommit(Math.min(Math.max(start + d, 0), max));
   return (
     <View className={styles.container}>
       <View className={styles.times}>
@@ -38,6 +41,7 @@ export function Scrubber({ duration, start, clipLength, onChange }: Props) {
         step={0.1}
         value={start}
         onValueChange={onChange}
+        onSlidingComplete={onCommit}
         minimumTrackTintColor="#4F46E5"
         thumbTintColor="#4F46E5"
         accessibilityLabel={t('crop.start')}
