@@ -1,8 +1,8 @@
 import { act, renderHook, waitFor } from '@testing-library/react-native';
 import { router } from 'expo-router';
 
-import { updateMetadata } from '@/features/videos/repo';
-import type { Video } from '@/features/videos/types';
+import { updateMetadata } from '@/features/videos/data/repo';
+import type { Video } from '@/features/videos/data/types';
 import { createQueryWrapper } from '@/test/queryWrapper';
 
 import { useEditVideo } from './useEditVideo';
@@ -10,7 +10,7 @@ import { useEditVideo } from './useEditVideo';
 jest.mock('expo-router', () => ({
   router: { push: jest.fn(), replace: jest.fn(), back: jest.fn(), dismissTo: jest.fn() },
 }));
-jest.mock('@/features/videos/repo', () => ({
+jest.mock('@/features/videos/data/repo', () => ({
   insertVideo: jest.fn(),
   listVideos: jest.fn(),
   getVideo: jest.fn(),

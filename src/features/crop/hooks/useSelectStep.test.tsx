@@ -2,8 +2,8 @@ import { act, renderHook } from '@testing-library/react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router';
 
-import { useCropStore } from '@/features/crop/store';
-import i18n from '@/i18n';
+import { useCropStore } from '@/features/crop/data/store';
+import i18n from '@/core/i18n';
 
 import { useSelectStep } from './useSelectStep';
 

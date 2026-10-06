@@ -19,7 +19,11 @@ export function Filmstrip({ frames, duration, start, clipLength }: Props) {
   const from = duration > 0 ? (start / duration) * 100 : 0;
   const size = duration > 0 ? (clipLength / duration) * 100 : 100;
   return (
-    <View className={styles.strip} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+    <View
+      className={styles.strip}
+      accessibilityElementsHidden
+      importantForAccessibility="no-hide-descendants"
+    >
       {(frames.length ? frames : Array.from<VideoThumbnail | undefined>({ length: FALLBACK_FRAMES })).map(
         (frame, i) => (
           <View key={i} className={styles.frame}>

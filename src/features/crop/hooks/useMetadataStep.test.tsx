@@ -2,9 +2,9 @@ import { act, renderHook, waitFor } from '@testing-library/react-native';
 import { router } from 'expo-router';
 import { trimVideo } from 'expo-trim-video';
 
-import { useCropStore } from '@/features/crop/store';
-import { insertVideo } from '@/features/videos/repo';
-import i18n from '@/i18n';
+import { useCropStore } from '@/features/crop/data/store';
+import { insertVideo } from '@/features/videos/data/repo';
+import i18n from '@/core/i18n';
 import { createQueryWrapper } from '@/test/queryWrapper';
 
 import { useMetadataStep } from './useMetadataStep';
@@ -22,7 +22,7 @@ jest.mock('expo-file-system', () => ({
     this.copy = (...args: unknown[]) => mockCopy(...args);
   }),
 }));
-jest.mock('@/features/videos/repo', () => ({
+jest.mock('@/features/videos/data/repo', () => ({
   insertVideo: jest.fn(),
   listVideos: jest.fn(),
   getVideo: jest.fn(),

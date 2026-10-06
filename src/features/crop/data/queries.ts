@@ -1,8 +1,8 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { File, Paths } from 'expo-file-system';
 
-import { CLIP_SECONDS } from './constants';
-import { generateThumbnails } from '@/utils/thumbnails';
+import { CLIP_SECONDS } from '@/shared/constants';
+import { generateThumbnails } from '@/shared/utils/thumbnails';
 
 const FRAMES = 6;
 

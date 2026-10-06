@@ -1,6 +1,6 @@
 const mockDb = { getAllAsync: jest.fn(), getFirstAsync: jest.fn(), runAsync: jest.fn() };
 
-jest.mock('@/db', () => ({ getDb: () => Promise.resolve(mockDb) }));
+jest.mock('@/core/db', () => ({ getDb: () => Promise.resolve(mockDb) }));
 
 import { getVideo, insertVideo, listVideos, updateMetadata } from './repo';
 

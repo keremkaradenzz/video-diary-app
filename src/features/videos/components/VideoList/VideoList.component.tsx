@@ -1,14 +1,14 @@
-import { FlashList } from "@shopify/flash-list";
-import type { VideoThumbnail } from "expo-video";
-import { useTranslation } from "react-i18next";
-import { Text, View } from "react-native";
+import { FlashList } from '@shopify/flash-list';
+import type { VideoThumbnail } from 'expo-video';
+import { useTranslation } from 'react-i18next';
+import { Text, View } from 'react-native';
 
-import { Button } from "@/components/Button";
-import { Screen } from "@/components/Screen";
-import { VideoListItem } from "@/features/videos/components/VideoListItem";
-import type { Video } from "@/features/videos/types";
+import { Button } from '@/shared/components/Button';
+import { Screen } from '@/shared/components/Screen';
+import { VideoListItem } from '@/features/videos/components/VideoListItem';
+import type { Video } from '@/features/videos/data/types';
 
-import { styles } from "./videoList.styles";
+import { styles } from './videoList.styles';
 
 type Props = {
   videos: Video[];
@@ -19,13 +19,7 @@ type Props = {
   onCreate: () => void;
 };
 
-export function VideoList({
-  videos,
-  thumbnails,
-  clipSeconds,
-  onSelect,
-  onCreate,
-}: Props) {
+export function VideoList({ videos, thumbnails, clipSeconds, onSelect, onCreate }: Props) {
   const { t } = useTranslation();
   return (
     <Screen>
@@ -37,10 +31,10 @@ export function VideoList({
         contentContainerClassName={styles.content}
         ListHeaderComponent={
           <View className={styles.header}>
-            <Text className={styles.title}>{t("home.title")}</Text>
+            <Text className={styles.title}>{t('home.title')}</Text>
             {videos.length > 0 && (
               <Text className={styles.summary}>
-                {t("home.summary", {
+                {t('home.summary', {
                   count: videos.length,
                   seconds: videos.length * clipSeconds,
                 })}
@@ -50,8 +44,8 @@ export function VideoList({
         }
         ListEmptyComponent={
           <View className={styles.empty}>
-            <Text className={styles.emptyTitle}>{t("home.empty")}</Text>
-            <Text className={styles.emptyHint}>{t("home.emptyHint")}</Text>
+            <Text className={styles.emptyTitle}>{t('home.empty')}</Text>
+            <Text className={styles.emptyHint}>{t('home.emptyHint')}</Text>
           </View>
         }
         renderItem={({ item, index }) => (
@@ -59,13 +53,13 @@ export function VideoList({
             video={item}
             index={index}
             thumbnail={thumbnails[item.id]}
-            duration={`0:${String(clipSeconds).padStart(2, "0")}`}
+            duration={`0:${String(clipSeconds).padStart(2, '0')}`}
             onPress={() => onSelect(item.id)}
           />
         )}
       />
       <View className={styles.bar}>
-        <Button label={t("home.newVideo")} onPress={onCreate} />
+        <Button label={t('home.newVideo')} onPress={onCreate} />
       </View>
     </Screen>
   );

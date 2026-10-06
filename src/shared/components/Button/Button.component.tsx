@@ -23,7 +23,9 @@ export function Button({ label, onPress, loading, disabled, variant = 'primary' 
       {loading ? (
         <ActivityIndicator color={primary ? 'white' : '#4F46E5'} />
       ) : (
-        <Text className={`${styles.label} ${primary ? styles.labelPrimary : styles.labelSecondary}`}>{label}</Text>
+        <Text className={`${styles.label} ${primary ? styles.labelPrimary : styles.labelSecondary}`}>
+          {label}
+        </Text>
       )}
     </Pressable>
   );

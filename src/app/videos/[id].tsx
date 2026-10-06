@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 
-import { Loader } from '@/components/Loader';
-import { Notice } from '@/components/Notice';
+import { Loader } from '@/shared/components/Loader';
+import { Notice } from '@/shared/components/Notice';
 import { VideoDetails } from '@/features/videos/components/VideoDetails';
 import { useRouteVideo } from '@/features/videos/hooks/useRouteVideo';
 import { useVideoDetails } from '@/features/videos/hooks/useVideoDetails';

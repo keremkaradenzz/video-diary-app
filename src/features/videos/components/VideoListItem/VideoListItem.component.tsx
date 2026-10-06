@@ -1,28 +1,25 @@
-import { Image } from 'expo-image';
 import type { VideoThumbnail } from 'expo-video';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
-import type { Video } from '@/features/videos/types';
+import { ClipThumbnail } from '@/shared/components/ClipThumbnail';
+import type { Video } from '@/features/videos/data/types';
 
-import { styles, tiles } from './videoListItem.styles';
+import { styles } from './videoListItem.styles';
 
-type Props = { video: Video; thumbnail?: VideoThumbnail; index: number; duration: string; onPress: () => void };
+type Props = {
+  video: Video;
+  thumbnail?: VideoThumbnail;
+  index: number;
+  duration: string;
+  onPress: () => void;
+};
 
 export function VideoListItem({ video, thumbnail, index, duration, onPress }: Props) {
   return (
     <Animated.View entering={FadeInDown.delay(Math.min(index, 8) * 40)}>
       <Pressable onPress={onPress} accessibilityRole="button" className={styles.card}>
-        <View className={`${styles.tile} ${tiles[video.id % tiles.length]}`}>
-          {thumbnail ? (
-            <Image source={thumbnail} style={StyleSheet.absoluteFill} contentFit="cover" />
-          ) : (
-            <Text className={styles.play}>▶</Text>
-          )}
-          <View className={styles.badge}>
-            <Text className={styles.badgeText}>{duration}</Text>
-          </View>
-        </View>
+        <ClipThumbnail thumbnail={thumbnail} duration={duration} seed={video.id} />
         <View className={styles.body}>
           <Text numberOfLines={1} className={styles.title}>
             {video.name}

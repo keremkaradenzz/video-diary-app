@@ -2,14 +2,14 @@ import type { VideoPlayer as Player, VideoThumbnail } from 'expo-video';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
-import { Button } from '@/components/Button';
-import { Screen } from '@/components/Screen';
-import { StepBar } from '@/components/StepBar';
-import { VideoPlayer } from '@/components/VideoPlayer';
+import { Button } from '@/shared/components/Button';
+import { Screen } from '@/shared/components/Screen';
+import { StepBar } from '@/shared/components/StepBar';
+import { VideoPlayer } from '@/shared/components/VideoPlayer';
 import { Filmstrip } from '@/features/crop/components/Filmstrip';
 import { Scrubber } from '@/features/crop/components/Scrubber';
 
-import { styles } from './trimEditor.styles';
+import { styles } from './trimStep.styles';
 
 type Props = {
   player: Player;
@@ -22,7 +22,16 @@ type Props = {
   onBack: () => void;
 };
 
-export function TrimEditor({ player, frames, duration, startSec, clipLength, onChangeStart, onNext, onBack }: Props) {
+export function TrimStep({
+  player,
+  frames,
+  duration,
+  startSec,
+  clipLength,
+  onChangeStart,
+  onNext,
+  onBack,
+}: Props) {
   const { t } = useTranslation();
   return (
     <Screen className={styles.container}>

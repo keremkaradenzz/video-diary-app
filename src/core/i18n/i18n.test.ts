@@ -11,7 +11,9 @@ describe('i18n', () => {
   });
 
   it('interpolates values', () => {
-    expect(i18n.t('crop.tooShort', { lng: 'tr', seconds: 5 })).toBe('Video en az 5 saniye uzunluğunda olmalı.');
+    expect(i18n.t('crop.tooShort', { lng: 'tr', seconds: 5 })).toBe(
+      'Video en az 5 saniye uzunluğunda olmalı.',
+    );
   });
 
   it('falls back to English for unsupported languages', () => {

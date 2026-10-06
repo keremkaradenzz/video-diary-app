@@ -3,7 +3,7 @@ import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/rea
 import { getVideo, insertVideo, listVideos, updateMetadata } from './repo';
 import type { Metadata } from './schema';
 import type { Video } from './types';
-import { generateThumbnails } from '@/utils/thumbnails';
+import { generateThumbnails } from '@/shared/utils/thumbnails';
 
 const keys = { all: ['videos'] as const, one: (id: number) => ['videos', id] as const };
 

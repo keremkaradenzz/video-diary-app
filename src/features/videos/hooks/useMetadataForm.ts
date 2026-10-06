@@ -1,9 +1,13 @@
 import { useState } from 'react';
 
-import { validateMetadata, type Metadata, type MetadataErrors } from '@/features/videos/schema';
+import { validateMetadata, type Metadata, type MetadataErrors } from '@/features/videos/data/schema';
+import type { MetadataFormFields } from '@/features/videos/data/types';
 
 /** Form state + validation. The returned object matches the props of `MetadataForm`. */
-export function useMetadataForm(initial: Metadata | undefined, onValid: (m: Metadata) => void) {
+export function useMetadataForm(
+  initial: Metadata | undefined,
+  onValid: (m: Metadata) => void,
+): MetadataFormFields {
   const [name, onChangeName] = useState(initial?.name ?? '');
   const [description, onChangeDescription] = useState(initial?.description ?? '');
   const [errors, setErrors] = useState<MetadataErrors>({});

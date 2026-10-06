@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 
-import { CLIP_SECONDS } from '@/constants';
-import { useThumbnails, useVideos } from '@/features/videos/queries';
+import { CLIP_SECONDS } from '@/shared/constants';
+import { useThumbnails, useVideos } from '@/features/videos/data/queries';
 
 export function useVideoList() {
   const { data, isPending } = useVideos();

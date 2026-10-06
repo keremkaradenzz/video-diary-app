@@ -2,7 +2,7 @@ import Slider from '@react-native-community/slider';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
-import { Button } from '@/components/Button';
+import { Button } from '@/shared/components/Button';
 
 import { styles } from './scrubber.styles';
 

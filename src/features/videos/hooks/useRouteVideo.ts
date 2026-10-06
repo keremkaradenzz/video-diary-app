@@ -1,6 +1,6 @@
 import { useLocalSearchParams } from 'expo-router';
 
-import { useVideo } from '@/features/videos/queries';
+import { useVideo } from '@/features/videos/data/queries';
 
 /** Loads the video addressed by the `[id]` route param. */
 export function useRouteVideo() {

@@ -1,16 +1,16 @@
 import { act, renderHook } from '@testing-library/react-native';
 import { router } from 'expo-router';
 
-import { useCropStore } from '@/features/crop/store';
-import { useClipPlayer } from '@/hooks/useClipPlayer';
+import { useCropStore } from '@/features/crop/data/store';
+import { useClipPlayer } from '@/shared/hooks/useClipPlayer';
 
 import { useTrimStep } from './useTrimStep';
 
 jest.mock('expo-router', () => ({
   router: { push: jest.fn(), replace: jest.fn(), back: jest.fn(), dismissTo: jest.fn() },
 }));
-jest.mock('@/features/crop/queries', () => ({ useFilmstrip: () => ({ data: undefined }) }));
-jest.mock('@/hooks/useClipPlayer', () => ({ useClipPlayer: jest.fn(() => ({ id: 'player' })) }));
+jest.mock('@/features/crop/data/queries', () => ({ useFilmstrip: () => ({ data: undefined }) }));
+jest.mock('@/shared/hooks/useClipPlayer', () => ({ useClipPlayer: jest.fn(() => ({ id: 'player' })) }));
 
 describe('useTrimStep', () => {
   beforeEach(() => {

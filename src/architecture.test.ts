@@ -11,7 +11,7 @@ const FORBIDDEN = [
   /from 'expo-image-picker'/,
   /from 'expo-trim-video'/,
   /from 'expo-file-system'/,
-  /from '@\/db'/,
+  /from '@\/core\/db'/,
   /from '[^']*\/(store|queries|repo)'/,
   /from '[^']*\/hooks\//,
 ];
@@ -102,9 +102,37 @@ describe('architecture: dependencies', () => {
 });
 
 describe('architecture: containers', () => {
-  const screens = walk(join(__dirname, 'app')).filter((f) => f.endsWith('.tsx') && !f.endsWith('_layout.tsx'));
+  const screens = walk(join(__dirname, 'app')).filter(
+    (f) => f.endsWith('.tsx') && !f.endsWith('_layout.tsx'),
+  );
 
   it.each(screens)('%s does not touch data layers directly', (file) => {
-    expect(read(file)).not.toMatch(/from '[^']*\/(store|queries|repo)'|from '@tanstack|from 'zustand'|from 'expo-sqlite'/);
+    expect(read(file)).not.toMatch(
+      /from '[^']*\/(store|queries|repo)'|from '@tanstack|from 'zustand'|from 'expo-sqlite'/,
+    );
+  });
+});
+
+describe('architecture: layers', () => {
+  const importsOf = (f: string) => [...read(f).matchAll(/from '([^']+)'/g)].map((m) => m[1]);
+
+  // shared/ and core/ sit below features/: they must not know about any feature.
+  it.each([...code(join(__dirname, 'shared')), ...code(join(__dirname, 'core'))])(
+    '%s does not import a feature',
+    (file) => {
+      expect(importsOf(file).filter((i) => i.startsWith('@/features'))).toEqual([]);
+    },
+  );
+
+  // A feature's data/ folder (repo, schema, store, queries) never reaches into the UI or the router.
+  const dataFiles = code(__dirname).filter((f) => /\/features\/[^/]+\/data\/[^/]+$/.test(f));
+  it('finds data modules to check', () => {
+    expect(dataFiles.length).toBeGreaterThan(3);
+  });
+
+  it.each(dataFiles)('%s has no UI, hook or router imports', (file) => {
+    expect(
+      importsOf(file).filter((i) => /\/components\/|\/hooks\/|^expo-router$|^react-native/.test(i)),
+    ).toEqual([]);
   });
 });

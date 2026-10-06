@@ -1,11 +1,11 @@
-import { router } from "expo-router";
+import { router } from 'expo-router';
 
-import { CLIP_SECONDS } from "@/features/crop/constants";
-import { useFilmstrip } from "@/features/crop/queries";
-import { useCropStore } from "@/features/crop/store";
-import { useClipPlayer } from "@/hooks/useClipPlayer";
+import { CLIP_SECONDS } from '@/shared/constants';
+import { useFilmstrip } from '@/features/crop/data/queries';
+import { useCropStore } from '@/features/crop/data/store';
+import { useClipPlayer } from '@/shared/hooks/useClipPlayer';
 
-import { useRequireSource } from "./useRequireSource";
+import { useRequireSource } from './useRequireSource';
 
 export function useTrimStep() {
   const sourceUri = useRequireSource();
@@ -26,7 +26,7 @@ export function useTrimStep() {
     startSec,
     clipLength: CLIP_SECONDS,
     onChangeStart: setStart,
-    onNext: () => router.push("/crop/metadata"),
+    onNext: () => router.push('/crop/metadata'),
     onBack: () => router.back(),
   };
 }

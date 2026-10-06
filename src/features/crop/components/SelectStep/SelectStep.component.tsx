@@ -2,15 +2,15 @@ import { useTranslation } from 'react-i18next';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Text, View } from 'react-native';
 
-import { Button } from '@/components/Button';
-import { Screen } from '@/components/Screen';
-import { StepBar } from '@/components/StepBar';
+import { Button } from '@/shared/components/Button';
+import { Screen } from '@/shared/components/Screen';
+import { StepBar } from '@/shared/components/StepBar';
 
-import { styles } from './selectVideo.styles';
+import { styles } from './selectStep.styles';
 
 type Props = { onPick: () => void; onClose: () => void; error: string | null; minSeconds: number };
 
-export function SelectVideo({ onPick, onClose, error, minSeconds }: Props) {
+export function SelectStep({ onPick, onClose, error, minSeconds }: Props) {
   const { t } = useTranslation();
   return (
     <Screen className={styles.container}>

@@ -28,9 +28,6 @@ export const tr: typeof en = {
     save: 'Kaydet',
   },
   crop: {
-    selectTitle: '1. Video seç',
-    trimTitle: '2. Kırp',
-    metadataTitle: '3. Detaylar',
     choose: 'Galeriden seç',
     selectHeading: 'Bir video seç',
     selectHint: 'Galerinden bir video seç, sonra ondan bir bölüm kırp.',
@@ -46,7 +43,6 @@ export const tr: typeof en = {
     next: 'İleri',
     metadataHeading: 'Klibe ad ver',
     cropAndSave: 'Kırp ve kaydet',
-    range: '{{start}} sn – {{end}} sn / {{total}} sn',
     tooShort: 'Video en az {{seconds}} saniye uzunluğunda olmalı.',
     trimUnavailable: "Kırpma için geliştirme build'i gerekir, Expo Go'da çalışmaz.",
   },

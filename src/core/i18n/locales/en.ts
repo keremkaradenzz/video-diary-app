@@ -25,9 +25,6 @@ export const en = {
     save: 'Save',
   },
   crop: {
-    selectTitle: '1. Select video',
-    trimTitle: '2. Crop',
-    metadataTitle: '3. Details',
     choose: 'Choose from gallery',
     selectHeading: 'Pick a video',
     selectHint: 'Choose a video from your gallery, then crop a segment from it.',
@@ -43,7 +40,6 @@ export const en = {
     next: 'Next',
     metadataHeading: 'Name your clip',
     cropAndSave: 'Crop & save',
-    range: '{{start}}s – {{end}}s of {{total}}s',
     tooShort: 'Video must be at least {{seconds}} seconds long.',
     trimUnavailable: 'Cropping needs a development build and does not work in Expo Go.',
   },

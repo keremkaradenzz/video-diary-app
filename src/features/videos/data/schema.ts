@@ -15,9 +15,10 @@ export type Metadata = z.infer<typeof metadataSchema>;
 export type MetadataErrors = Partial<Record<keyof Metadata, ValidationKey>>;
 
 /** Pure validation used by the form hook; first error key per field. */
-export function validateMetadata(
-  input: { name: string; description: string },
-): { ok: true; data: Metadata } | { ok: false; errors: MetadataErrors } {
+export function validateMetadata(input: {
+  name: string;
+  description: string;
+}): { ok: true; data: Metadata } | { ok: false; errors: MetadataErrors } {
   const res = metadataSchema.safeParse(input);
   if (res.success) return { ok: true, data: res.data };
   const f = res.error.flatten().fieldErrors;
