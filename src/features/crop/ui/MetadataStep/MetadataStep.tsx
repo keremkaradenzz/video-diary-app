@@ -2,7 +2,7 @@ import type { VideoThumbnail } from 'expo-video';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
-import { ClipThumbnail } from '@/shared/media/components/ClipThumbnail';
+import { ClipThumbnail } from '@/shared/media/ui/ClipThumbnail';
 import { StepBar } from '@/shared/ui/StepBar';
 import { MetadataForm, type MetadataFormFields } from '@/features/videos';
 

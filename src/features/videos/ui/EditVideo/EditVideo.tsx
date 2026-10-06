@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Text } from 'react-native';
 
 import { ScreenHeader } from '@/shared/ui/ScreenHeader';
-import { MetadataForm } from '@/features/videos/components/MetadataForm';
+import { MetadataForm } from '@/features/videos/ui/MetadataForm';
 import type { MetadataFormFields } from '@/features/videos/model/types';
 
 import { styles } from './EditVideo.styles';

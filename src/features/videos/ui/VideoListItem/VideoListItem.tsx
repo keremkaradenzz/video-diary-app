@@ -2,7 +2,7 @@ import type { VideoThumbnail } from 'expo-video';
 import { Pressable, Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
-import { ClipThumbnail } from '@/shared/media/components/ClipThumbnail';
+import { ClipThumbnail } from '@/shared/media/ui/ClipThumbnail';
 import { formatDate } from '@/shared/utils/formatDate';
 import type { Video } from '@/features/videos/model/types';
 

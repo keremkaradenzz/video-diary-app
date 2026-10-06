@@ -3,7 +3,7 @@ import { basename, dirname, join } from 'path';
 
 const SRC = join(__dirname, '..');
 
-// Presentational components (feature `components/`, `shared/ui`, `shared/media/components`) stay pure:
+// Presentational components (every `ui/` folder: feature `ui/`, `shared/ui`, `shared/media/ui`) stay pure:
 // props in, JSX out. Data, navigation and side effects belong in hooks and containers.
 const FORBIDDEN = [
   /from 'expo-router'/,
@@ -31,12 +31,12 @@ const importsOf = (f: string) => [...read(f).matchAll(/from '([^']+)'/g)].map((m
 const rel = (f: string) => f.slice(SRC.length + 1);
 
 const all = walk(SRC);
-// A component folder lives in `components/` (features, shared/media) or directly in `shared/ui/`.
-const COMPONENT_DIR = /\/(components|shared\/ui)\/[^/]+\/[^/]+$/;
+// A component folder sits directly inside a `ui/` folder.
+const COMPONENT_DIR = /\/ui\/[^/]+\/[^/]+$/;
 const presentational = all.filter(
-  (f) => /\/(components|shared\/ui)\/[^/]+\/[A-Z][A-Za-z0-9]*\.tsx$/.test(f) && !f.includes('.test.'),
+  (f) => /\/ui\/[^/]+\/[A-Z][A-Za-z0-9]*\.tsx$/.test(f) && !f.includes('.test.'),
 );
-const strayComponentFiles = all.filter((f) => /\/(components|shared\/ui)\/[^/]+$/.test(f));
+const strayComponentFiles = all.filter((f) => /\/ui\/[^/]+$/.test(f));
 const componentFolders = [...new Set(all.filter((f) => COMPONENT_DIR.test(f)).map(dirname))];
 
 const features = readdirSync(join(SRC, 'features'));
@@ -162,7 +162,7 @@ describe('architecture: layers', () => {
   // api/ (SQLite, TanStack Query) and model/ (schema, types, store) never reach into the UI or router.
   const layerFiles = (layer: string) =>
     code(SRC).filter((f) => new RegExp(`/features/[^/]+/${layer}/[^/]+$`).test(f));
-  const noUi = (i: string) => /\/components\/|\/hooks\/|^expo-router$|^react-native/.test(i);
+  const noUi = (i: string) => /\/ui\/|\/hooks\/|^expo-router$|^react-native/.test(i);
 
   it('finds api and model modules to check', () => {
     expect(layerFiles('api').length).toBeGreaterThan(2);

@@ -28,7 +28,7 @@ Scripts: `npm test`, `npm run typecheck`, `npm run lint`.
 
 ## Architecture
 
-Container/Presentational for screens, Hooks for logic, one folder per feature.
+Feature-based architecture in the style of [Bulletproof React](https://github.com/alan2207/bulletproof-react), borrowing the layer rule, segment names (`ui`, `api`, `model`) and public-API rule from [Feature-Sliced Design](https://feature-sliced.design). Container/Presentational for screens, hooks for logic, one folder per feature.
 
 ```
 route (container)  ->  controller hook  ->  api (SQLite, TanStack Query) / model (Zod, types, Zustand)
@@ -36,13 +36,13 @@ route (container)  ->  controller hook  ->  api (SQLite, TanStack Query) / model
        +--------->  presentational component (props in, JSX out)
 ```
 
-| Layer           | Where                                                                          | May use                                       |
-| --------------- | ------------------------------------------------------------------------------ | --------------------------------------------- |
-| Container       | `src/app/**` (route files, ~10 lines)                                          | a feature's public API (`@/features/<name>`)  |
-| Controller hook | `src/features/*/hooks/`                                                        | router, `api`, `model`, other hooks           |
-| API             | `src/features/*/api/` (`repo.ts` SQLite, `queries.ts` TanStack Query)          | `model`, `core`, `shared`                     |
-| Model           | `src/features/*/model/` (`schema.ts`, `types.ts`, `store.ts`)                  | pure code only; never `api`, UI or the router |
-| Presentational  | `src/features/*/components/`, `src/shared/ui/`, `src/shared/media/components/` | props only; no router, store, queries, SQLite |
+| Layer           | Where                                                                 | May use                                       |
+| --------------- | --------------------------------------------------------------------- | --------------------------------------------- |
+| Container       | `src/app/**` (route files, ~10 lines)                                 | a feature's public API (`@/features/<name>`)  |
+| Controller hook | `src/features/*/hooks/`                                               | router, `api`, `model`, other hooks           |
+| API             | `src/features/*/api/` (`repo.ts` SQLite, `queries.ts` TanStack Query) | `model`, `core`, `shared`                     |
+| Model           | `src/features/*/model/` (`schema.ts`, `types.ts`, `store.ts`)         | pure code only; never `api`, UI or the router |
+| Presentational  | `src/features/*/ui/`, `src/shared/ui/`, `src/shared/media/ui/`        | props only; no router, store, queries, SQLite |
 
 ```
 src/
@@ -52,16 +52,16 @@ src/
       api/        queries (TanStack Query: filmstrip, trim mutation, clip thumbnail)
       model/      store (Zustand wizard state)
       hooks/      useSelectStep, useTrimStep, useMetadataStep, guards
-      components/ SelectStep, TrimStep, MetadataStep, Scrubber, Filmstrip
+      ui/         SelectStep, TrimStep, MetadataStep, Scrubber, Filmstrip
     videos/
       api/        repo (SQLite), queries (TanStack Query)
       model/      schema (Zod), types
       hooks/      useVideoList, useVideoDetails, useEditVideo, useMetadataForm, useRouteVideo
-      components/ VideoList, VideoListItem, VideoDetails, EditVideo, MetadataForm
+      ui/         VideoList, VideoListItem, VideoDetails, EditVideo, MetadataForm
   shared/         domain-agnostic code any feature may use
     ui/           Button, Loader, Notice, Screen, ScreenHeader, StepBar
                   (Screen is the only place that applies safe-area padding)
-    media/        video and image helpers: components/ (VideoPlayer, ClipThumbnail),
+    media/        video and image helpers: ui/ (VideoPlayer, ClipThumbnail),
                   hooks/ (useClipPlayer), utils/ (thumbnails)
     utils/        files, formatDate
   core/           app infrastructure, below everything else
@@ -74,7 +74,7 @@ src/
 ```
 
 Dependencies point one way: `app` -> `features` -> `shared` -> `core`. `shared` and `core` never import a
-feature, and `core` never imports `shared`. A feature's `api/` and `model/` never import components, hooks or
+feature, and `core` never imports `shared`. A feature's `api/` and `model/` never import ui, hooks or
 the router, and `model/` never imports `api/`.
 
 **Public API.** Each feature exposes what others may use from its `index.ts` (named exports only). Routes

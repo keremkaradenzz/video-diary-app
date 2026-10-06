@@ -5,9 +5,9 @@ import { Text, View } from 'react-native';
 import { Button } from '@/shared/ui/Button';
 import { Screen } from '@/shared/ui/Screen';
 import { StepBar } from '@/shared/ui/StepBar';
-import { VideoPlayer } from '@/shared/media/components/VideoPlayer';
-import { Filmstrip } from '@/features/crop/components/Filmstrip';
-import { Scrubber } from '@/features/crop/components/Scrubber';
+import { VideoPlayer } from '@/shared/media/ui/VideoPlayer';
+import { Filmstrip } from '@/features/crop/ui/Filmstrip';
+import { Scrubber } from '@/features/crop/ui/Scrubber';
 
 import { styles } from './TrimStep.styles';
 

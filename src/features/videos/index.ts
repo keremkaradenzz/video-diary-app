@@ -1,8 +1,8 @@
 // Public API of the videos feature. Other features and routes import from here, never from inner folders.
-export { EditVideo } from './components/EditVideo';
-export { MetadataForm } from './components/MetadataForm';
-export { VideoDetails } from './components/VideoDetails';
-export { VideoList } from './components/VideoList';
+export { EditVideo } from './ui/EditVideo';
+export { MetadataForm } from './ui/MetadataForm';
+export { VideoDetails } from './ui/VideoDetails';
+export { VideoList } from './ui/VideoList';
 export { useSaveVideo } from './api/queries';
 export { useEditVideo } from './hooks/useEditVideo';
 export { useMetadataForm } from './hooks/useMetadataForm';

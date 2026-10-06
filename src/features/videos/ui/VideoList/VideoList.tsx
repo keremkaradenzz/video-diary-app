@@ -5,7 +5,7 @@ import { Text, View } from 'react-native';
 
 import { Button } from '@/shared/ui/Button';
 import { Screen } from '@/shared/ui/Screen';
-import { VideoListItem } from '@/features/videos/components/VideoListItem';
+import { VideoListItem } from '@/features/videos/ui/VideoListItem';
 import type { Video } from '@/features/videos/model/types';
 
 import { styles } from './VideoList.styles';

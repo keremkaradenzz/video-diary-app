@@ -5,7 +5,7 @@ import { ScrollView, Text, View } from 'react-native';
 import { Button } from '@/shared/ui/Button';
 import { Screen } from '@/shared/ui/Screen';
 import { ScreenHeader } from '@/shared/ui/ScreenHeader';
-import { VideoPlayer } from '@/shared/media/components/VideoPlayer';
+import { VideoPlayer } from '@/shared/media/ui/VideoPlayer';
 import { formatDateTime } from '@/shared/utils/formatDate';
 import type { Video } from '@/features/videos/model/types';
 
