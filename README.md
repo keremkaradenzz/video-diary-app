@@ -4,9 +4,11 @@ Import a video, crop a 5-second segment, add a name and description, and keep it
 
 ## Stack
 
-Expo (SDK 57) · Expo Router · Zustand · TanStack Query · expo-trim-video · NativeWind · expo-video · expo-sqlite · Reanimated · Zod
+Expo (SDK 57) · Expo Router · Zustand · TanStack Query · expo-trim-video · NativeWind · expo-video · expo-sqlite · Reanimated · Zod · FlashList
 
 ## Setup
+
+Requirements: Node 20+, Xcode for iOS and/or Android Studio for Android.
 
 ```bash
 # npm
@@ -29,9 +31,10 @@ Scripts: `npm test`, `npm run typecheck`, `npm run lint`.
 ## Usage
 
 1. Tap **New video** and choose a video (at least 5 seconds long).
-2. Drag the slider to pick where the 5-second segment starts. The preview loops that segment.
+2. Drag the slider (or use the ±1 s buttons) to pick where the 5-second segment starts. The preview loops that segment.
 3. Tap **Next**, enter a name and description, then tap **Crop & save**.
 4. Open a video from the list to see its details. Tap **Edit** to change its name or description.
+
 
 ## Design decisions
 
@@ -41,6 +44,7 @@ Scripts: `npm test`, `npm run typecheck`, `npm run lint`.
 - **Scrubber:** the clip length is fixed at 5 seconds, so a single slider picks the start and the end is derived (plus ±1 s nudge buttons). A two-handle range would only allow lengths the app rejects.
 - **Validation:** one Zod schema validates both the create and the edit form; its messages are i18n keys.
 - **Clip files** are stored by file name and resolved against the document directory when read, because the app container path changes between installs and updates on iOS. If saving a clip fails after trimming, the trimmed file is deleted.
+- **Errors:** a render error in any route shows a translated fallback with a retry button (`ErrorBoundary` in `app/_layout.tsx`); failures of the trim, the database or the list show up as messages in the screen that triggered them.
 - **Scale:** paged queries, thumbnails only for visible rows, a virtualized list (FlashList), and feature folders with enforced boundaries.
 
 ## Architecture
@@ -135,13 +139,13 @@ Class names stay complete literal strings so Tailwind can find them (`tailwind.c
 
 `src/test/architecture.test.ts` enforces this: the layer rules above, the component folder layout, kebab-case names for every file and folder, feature public APIs (no deep imports from outside a feature), and `useQuery`/`useMutation` only in `api/queries.ts`.
 
-Trimmed clips are moved into the app's document directory and listed from SQLite. If saving the row fails, the clip file is deleted again.
+## Testing
 
-The 5-second length is fixed, so the scrubber is a single slider for the start point; the end follows automatically (no two-handle range).
+`npm test` runs the unit tests (schema, repo, migrations, query and controller hooks) and the architecture rules in `src/test/architecture.test.ts`. `npm run typecheck` and `npm run lint` must pass as well.
 
 ## Tooling
 
-- **Builds:** `eas.json` defines `development` (dev client), `preview` and `production` profiles: `bunx eas-cli build --profile development` (or `npx eas-cli@latest build ...`).
+- **Builds:** `eas.json` defines `development` (dev client), `preview` and `production` profiles: `npx eas-cli@latest build --profile development --platform android` (an installable APK for the `preview` profile).
 - **Commits:** see below; a husky hook enforces them locally.
 
 ## i18n
