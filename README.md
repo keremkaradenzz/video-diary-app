@@ -35,6 +35,21 @@ Scripts: `npm test`, `npm run typecheck`, `npm run lint`.
 3. Tap **Next**, enter a name and description, then tap **Crop & save**.
 4. Open a video from the list to see its details. Tap **Edit** to change its name or description.
 
+## Features
+
+| Feature                                                     | Where                                                                                             |
+| ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| List of saved clips, persisted, tap opens the details       | `/` (`videos/ui/video-list`), SQLite via `videos/api/repo.ts`, row tap goes to `/videos/[id]`     |
+| Details: video, name, description                           | `/videos/[id]` (`videos/ui/video-details`)                                                        |
+| Pick a video from the device                                | `/crop` (`crop/ui/select-step`, `expo-image-picker`)                                              |
+| Choose the 5 s segment with a scrubber, then continue       | `/crop/trim` (`video-player`, `filmstrip`, `scrubber`, **Next**)                                  |
+| Name and description form, then crop and save               | `/crop/metadata` (`metadata-form`, **Crop & save**)                                               |
+| Cropping with `expo-trim-video`, run through TanStack Query | `useTrimVideo`, a `useMutation` in `crop/api/queries.ts`                                          |
+| Edit name and description                                   | `/videos/[id]/edit` (`edit-video`, reuses `metadata-form`)                                        |
+| Validation with Zod                                         | one schema for the create and edit forms, inline error messages                                   |
+| Animations with Reanimated                                  | list row entry and error messages                                                                 |
+| Growing lists stay fast                                     | paged infinite query, lazy thumbnails, FlashList                                                  |
+| Simple navigation and styling                               | 3-step modal with a step bar, safe areas, loading and error states; NativeWind classes throughout |
 
 ## Design decisions
 
