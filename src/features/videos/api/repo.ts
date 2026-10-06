@@ -1,3 +1,5 @@
+import { File, Paths } from 'expo-file-system';
+
 import { getDb } from '@/core/db';
 
 import type { Metadata } from '../model/schema';
@@ -12,11 +14,16 @@ type Row = {
   created_at: string;
 };
 
+// Clips are stored by file name only: the app container path changes between installs and updates
+// (on iOS), so an absolute URI saved today would point nowhere tomorrow.
+const toFileUri = (name: string) => new File(Paths.document, name).uri;
+const fileName = (uri: string) => uri.slice(uri.lastIndexOf('/') + 1);
+
 const toVideo = (r: Row): Video => ({
   id: r.id,
   name: r.name,
   description: r.description,
-  uri: r.uri,
+  uri: toFileUri(r.uri),
   startSec: r.start_sec,
   createdAt: r.created_at,
 });
@@ -52,7 +59,7 @@ export async function insertVideo(v: Metadata & { uri: string; startSec: number 
     'INSERT INTO videos (name, description, uri, start_sec, created_at) VALUES (?, ?, ?, ?, ?)',
     v.name,
     v.description,
-    v.uri,
+    fileName(v.uri),
     v.startSec,
     new Date().toISOString(),
   );

@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 
-import { Loader } from '@/shared/ui/Loader';
-import { Notice } from '@/shared/ui/Notice';
+import { Loader } from '@/shared/ui/loader';
+import { Notice } from '@/shared/ui/notice';
 import { VideoDetails, useRouteVideo, useVideoDetails } from '@/features/videos';
 
 export default function VideoDetailsScreen() {

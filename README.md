@@ -58,19 +58,19 @@ src/
     crop/         the "create a clip" flow; depends on videos, never the reverse
       api/        queries (TanStack Query: filmstrip, trim mutation, clip thumbnail)
       model/      store (Zustand wizard state)
-      hooks/      useSelectStep, useTrimStep, useMetadataStep, guards
-      ui/         SelectStep, TrimStep, MetadataStep, Scrubber, Filmstrip
+      hooks/      use-select-step, use-trim-step, use-metadata-step, guards
+      ui/         select-step, trim-step, metadata-step, scrubber, filmstrip
     videos/
       api/        repo (SQLite), queries (TanStack Query)
       model/      schema (Zod), types
-      hooks/      useVideoList, useVideoDetails, useEditVideo, useMetadataForm, useRouteVideo
-      ui/         VideoList, VideoListItem, VideoDetails, EditVideo, MetadataForm
+      hooks/      use-video-list, use-video-details, use-edit-video, use-metadata-form, use-route-video
+      ui/         video-list, video-list-item, video-details, edit-video, metadata-form
   shared/         domain-agnostic code any feature may use
-    ui/           Button, Loader, Notice, Screen, ScreenHeader, StepBar
+    ui/           button, error-fallback, loader, notice, screen, screen-header, step-bar
                   (Screen is the only place that applies safe-area padding)
-    media/        video and image helpers: ui/ (VideoPlayer, ClipThumbnail),
-                  hooks/ (useClipPlayer), utils/ (thumbnails)
-    utils/        files, formatDate
+    media/        video and image helpers: ui/ (video-player, clip-thumbnail),
+                  hooks/ (use-clip-player), utils/ (thumbnails)
+    utils/        files, format-date
   core/           app infrastructure, below everything else
     config.ts     app-wide constants (CLIP_SECONDS)
     db/           connection (index.ts), migrate.ts, migrations.ts (append-only)
@@ -94,35 +94,36 @@ runs the entries a database has not seen yet and records progress in `PRAGMA use
 **Colors.** Edit `src/core/theme/colors.json`. Use class names (`bg-brand`, `bg-surface`) where possible and
 `theme.colors.*` for props that cannot take a class (Slider tint, navigator background).
 
-Every component is a folder with the same files:
+Every component is a folder with the same files (the `table/index.tsx` pattern from Expo's
+[folder structure guide](https://expo.dev/blog/expo-app-folder-structure-best-practices)):
 
 ```
-Button/
-  Button.tsx          the component (props in, JSX out)
-  Button.styles.ts    export const styles = { container: '...', label: '...' }
-  index.ts            export { Button } from './Button';
+button/
+  index.tsx           export function Button(...) { ... }   (import it as '@/shared/ui/button')
+  button.styles.ts    export const styles = { container: '...', label: '...' }
 ```
 
-Class names stay complete literal strings so Tailwind can find them (`tailwind.config.js` scans `src/**/*.{ts,tsx}`). `.vscode/settings.json` points Tailwind IntelliSense at `styles = { ... }` objects. Tests sit next to the code as `Name.test.tsx`.
+Class names stay complete literal strings so Tailwind can find them (`tailwind.config.js` scans `src/**/*.{ts,tsx}`). `.vscode/settings.json` points Tailwind IntelliSense at `styles = { ... }` objects. Tests sit next to the code as `name.test.tsx`.
 
 ### Naming
 
-| What                 | Convention                                                                                                  | Example                                                                                |
-| -------------------- | ----------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| Component folder     | `PascalCase/` with `Name.tsx`, `Name.styles.ts`, `index.ts`                                                 | `VideoList/VideoList.tsx`                                                              |
-| Styles file          | `Name.styles.ts`, one `styles` object of literal class strings                                              | `VideoList.styles.ts`                                                                  |
-| Hook file            | `useXxx.ts`, file name = export                                                                             | `useTrimStep.ts`                                                                       |
-| Route file           | lowercase, `[param]`, `_layout`; collection name is plural, same as the feature                             | `videos/[id]/edit.tsx`                                                                 |
-| Route default export | `<Name>Screen`                                                                                              | `VideoDetailsScreen`, `TrimStepScreen`                                                 |
-| Crop step            | route, hook and component share one name: `/crop/trim` -> `useTrimStep` -> `TrimStep`                       | `MetadataStep`                                                                         |
-| Shared form          | `MetadataForm` renders fields only and takes a `header` slot; `MetadataStep` and `EditVideo` fill it        |                                                                                        |
-| Formatting           | `.prettierrc.json`: single quotes, 110 columns (Tailwind IntelliSense reads single-quoted `styles` objects) |                                                                                        |
-| Feature modules      | lowercase noun, one role each                                                                               | `api/repo.ts`, `api/queries.ts`, `model/store.ts`, `model/schema.ts`, `model/types.ts` |
-| Tests                | next to the code, `*.test.ts(x)`                                                                            | `schema.test.ts`                                                                       |
-| Imports              | `@/` across folders, `./` inside a folder, feature public API from outside the feature                      |                                                                                        |
-| `index.ts`           | a single named re-export in component folders, or a module/feature entry; never `export *`                  |                                                                                        |
+| What                 | Convention                                                                                                              | Example                                                                                |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| Files and folders    | kebab-case, as in the Expo template. Exports keep React casing (`VideoList`, `useTrimStep`)                             | `video-list/`, `use-trim-step.ts`, `format-date.ts`                                    |
+| Component folder     | `name/` with `index.tsx` (the component) and `name.styles.ts`                                                           | `video-list/index.tsx`, `video-list/video-list.styles.ts`                              |
+| Styles file          | `name.styles.ts`, one `styles` object of literal class strings                                                          | `video-list.styles.ts`                                                                 |
+| Hook file            | `use-xxx.ts`, exporting `useXxx`                                                                                        | `use-trim-step.ts` -> `useTrimStep`                                                    |
+| Route file           | lowercase, `[param]`, `_layout`; collection name is plural, same as the feature                                         | `videos/[id]/edit.tsx`                                                                 |
+| Route default export | `<Name>Screen`                                                                                                          | `VideoDetailsScreen`, `TrimStepScreen`                                                 |
+| Crop step            | route, hook and component share one name: `/crop/trim` -> `use-trim-step` -> `trim-step`                                | `metadata-step`                                                                        |
+| Shared form          | `metadata-form` renders fields only and takes a `header` slot; `metadata-step` and `edit-video` fill it                 |                                                                                        |
+| Formatting           | `.prettierrc.json`: single quotes, 110 columns (Tailwind IntelliSense reads single-quoted `styles` objects)             |                                                                                        |
+| Feature modules      | lowercase noun, one role each                                                                                           | `api/repo.ts`, `api/queries.ts`, `model/store.ts`, `model/schema.ts`, `model/types.ts` |
+| Tests                | next to the code, `*.test.ts(x)`                                                                                        | `schema.test.ts`, `use-trim-step.test.tsx`                                             |
+| Imports              | `@/` across folders, `./` inside a folder, feature public API from outside the feature                                  | `@/shared/ui/button`, `@/features/videos`                                              |
+| `index.ts(x)`        | a component's `index.tsx` holds the component; a module or feature `index.ts` is a named-export entry, never `export *` |                                                                                        |
 
-`src/test/architecture.test.ts` enforces this: the layer rules above, the component folder layout, feature public APIs (no deep imports from outside a feature), and `useQuery`/`useMutation` only in `api/queries.ts`.
+`src/test/architecture.test.ts` enforces this: the layer rules above, the component folder layout, kebab-case names for every file and folder, feature public APIs (no deep imports from outside a feature), and `useQuery`/`useMutation` only in `api/queries.ts`.
 
 Trimmed clips are moved into the app's document directory and listed from SQLite. If saving the row fails, the clip file is deleted again.
 

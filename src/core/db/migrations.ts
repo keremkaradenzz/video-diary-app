@@ -10,4 +10,7 @@ export const MIGRATIONS = [
      created_at TEXT NOT NULL
    );
    CREATE INDEX IF NOT EXISTS idx_videos_created_at ON videos (created_at DESC, id DESC);`,
+  // Clips used to be stored as absolute file URIs, which break when the app container path changes
+  // (every reinstall and update on iOS). Keep only the file name; the repo resolves it at read time.
+  `UPDATE videos SET uri = replace(uri, rtrim(uri, replace(uri, '/', '')), '') WHERE uri LIKE '%/%';`,
 ];

@@ -1,0 +1,16 @@
+import { router } from 'expo-router';
+
+import { CLIP_SECONDS } from '@/core/config';
+import type { Video } from '@/features/videos/model/types';
+import { useClipPlayer } from '@/shared/media/hooks/use-clip-player';
+
+/** `video` may still be loading; the player is created with no source until it arrives. */
+export function useVideoDetails(video: Video | undefined) {
+  const player = useClipPlayer(video?.uri);
+  return {
+    player,
+    clipSeconds: CLIP_SECONDS,
+    onBack: () => router.back(),
+    onEdit: () => video && router.push({ pathname: '/videos/[id]/edit', params: { id: video.id } }),
+  };
+}

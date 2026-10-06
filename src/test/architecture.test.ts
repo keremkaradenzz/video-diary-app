@@ -33,13 +33,19 @@ const rel = (f: string) => f.slice(SRC.length + 1);
 const all = walk(SRC);
 // A component folder sits directly inside a `ui/` folder.
 const COMPONENT_DIR = /\/ui\/[^/]+\/[^/]+$/;
-const presentational = all.filter(
-  (f) => /\/ui\/[^/]+\/[A-Z][A-Za-z0-9]*\.tsx$/.test(f) && !f.includes('.test.'),
-);
+const presentational = all.filter((f) => /\/ui\/[^/]+\/index\.tsx$/.test(f));
 const strayComponentFiles = all.filter((f) => /\/ui\/[^/]+$/.test(f));
 const componentFolders = [...new Set(all.filter((f) => COMPONENT_DIR.test(f)).map(dirname))];
 
 const features = readdirSync(join(SRC, 'features'));
+
+// File and folder names are kebab-case (the Expo template convention): `video-list`, `use-trim-step.ts`.
+const KEBAB = /^[a-z0-9]+(-[a-z0-9]+)*$/;
+const pascal = (kebab: string) => kebab.replace(/(^|-)([a-z0-9])/g, (_, __, c: string) => c.toUpperCase());
+const camel = (kebab: string) => {
+  const p = pascal(kebab);
+  return p[0].toLowerCase() + p.slice(1);
+};
 
 describe('architecture: presentational components', () => {
   it('finds components to check', () => {
@@ -56,20 +62,18 @@ describe('component folders', () => {
     expect(strayComponentFiles.map(rel)).toEqual([]);
   });
 
-  it.each(componentFolders.map(rel))('%s follows Name/{Name.tsx, Name.styles.ts, index.ts}', (folderRel) => {
+  it.each(componentFolders.map(rel))('%s follows name/{index.tsx, name.styles.ts}', (folderRel) => {
     const folder = join(SRC, folderRel);
     const name = basename(folder);
-    const component = join(folder, `${name}.tsx`);
+    const component = join(folder, 'index.tsx');
     const styles = join(folder, `${name}.styles.ts`);
-    const allowed = [`${name}.tsx`, `${name}.styles.ts`, 'index.ts', `${name}.test.tsx`];
+    const allowed = ['index.tsx', `${name}.styles.ts`, `${name}.test.tsx`];
     const files = readdirSync(folder);
 
-    expect(name).toMatch(/^[A-Z][A-Za-z0-9]*$/);
-    expect(files).toEqual(expect.arrayContaining([`${name}.tsx`, 'index.ts']));
+    expect(name).toMatch(KEBAB);
+    expect(files).toContain('index.tsx');
     expect(files.filter((f) => !allowed.includes(f))).toEqual([]);
-    expect(read(component)).toMatch(new RegExp(`export function ${name}\\b`));
-    // index.ts is a single named re-export, never a star barrel.
-    expect(read(join(folder, 'index.ts')).trim()).toBe(`export { ${name} } from './${name}';`);
+    expect(read(component)).toMatch(new RegExp(`export function ${pascal(name)}\\b`));
 
     if (existsSync(styles)) {
       expect(read(styles)).toMatch(/^export const styles = \{/m);
@@ -85,9 +89,17 @@ describe('naming conventions', () => {
     code(SRC)
       .filter((f) => f.includes('/hooks/'))
       .map(rel),
-  )('%s: useXxx file exporting the same name', (file) => {
-    expect(stem(file)).toMatch(/^use[A-Z][A-Za-z0-9]*$/);
-    expect(read(join(SRC, file))).toMatch(new RegExp(`export (function|const) ${stem(file)}\\b`));
+  )('%s: use-xxx file exporting useXxx', (file) => {
+    expect(stem(file)).toMatch(/^use-[a-z0-9]+(-[a-z0-9]+)*$/);
+    expect(read(join(SRC, file))).toMatch(new RegExp(`export (function|const) ${camel(stem(file))}\\b`));
+  });
+
+  // Every file and folder name, e.g. `queries.trim-unavailable.test.ts` is checked as `queries`,
+  // `trim-unavailable`, `test`. `_layout`, `[id]` and `index` are Expo Router / module conventions.
+  it.each(all.map(rel))('%s: kebab-case name', (file) => {
+    const parts = file.split(/[/.]/);
+    const bad = parts.filter((p) => p && !KEBAB.test(p) && !/^(_layout|\[[a-z]+\])$/.test(p));
+    expect(bad).toEqual([]);
   });
 
   it.each(walk(join(SRC, 'app')).map(rel))('%s: route files are lowercase or [param]', (file) => {

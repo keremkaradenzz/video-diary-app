@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react-native';
 import { trimVideo } from 'expo-trim-video';
 
-import { createQueryWrapper } from '@/test/queryWrapper';
+import { createQueryWrapper } from '@/test/query-wrapper';
 
 import { useTrimVideo } from './queries';
 

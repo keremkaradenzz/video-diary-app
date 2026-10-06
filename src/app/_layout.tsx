@@ -8,7 +8,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { getDb } from '@/core/db';
 import { queryClient } from '@/core/query';
 import { theme } from '@/core/theme';
-import { ErrorFallback } from '@/shared/ui/ErrorFallback';
+import { ErrorFallback } from '@/shared/ui/error-fallback';
 
 // A render error in any route shows this instead of a white screen; `retry` re-renders the route.
 export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {

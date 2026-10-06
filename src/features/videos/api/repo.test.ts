@@ -1,6 +1,13 @@
 const mockDb = { getAllAsync: jest.fn(), getFirstAsync: jest.fn(), runAsync: jest.fn() };
 
 jest.mock('@/core/db', () => ({ getDb: () => Promise.resolve(mockDb) }));
+// The document directory differs per install, so the repo must build URIs from it at read time.
+jest.mock('expo-file-system', () => ({
+  Paths: { document: 'doc' },
+  File: jest.fn().mockImplementation(function (this: { uri: string }, ...parts: string[]) {
+    this.uri = `file:///${parts.join('/')}`;
+  }),
+}));
 
 import { countVideos, getVideo, insertVideo, listVideos, PAGE_SIZE, updateMetadata } from './repo';
 
@@ -8,7 +15,7 @@ const row = {
   id: 1,
   name: 'a',
   description: '',
-  uri: 'file:///a.mp4',
+  uri: 'a.mp4',
   start_sec: 2.5,
   created_at: '2026-10-05T09:44:00.000Z',
 };
@@ -19,7 +26,14 @@ describe('videos repo', () => {
   it('maps snake_case rows to Video', async () => {
     mockDb.getAllAsync.mockResolvedValue([row]);
     expect(await listVideos()).toEqual([
-      { id: 1, name: 'a', description: '', uri: 'file:///a.mp4', startSec: 2.5, createdAt: row.created_at },
+      {
+        id: 1,
+        name: 'a',
+        description: '',
+        uri: 'file:///doc/a.mp4',
+        startSec: 2.5,
+        createdAt: row.created_at,
+      },
     ]);
   });
 
@@ -53,5 +67,16 @@ describe('videos repo', () => {
   it('updateMetadata writes name, description and id in order', async () => {
     await updateMetadata(3, { name: 'n', description: 'd' });
     expect(mockDb.runAsync).toHaveBeenCalledWith(expect.stringContaining('UPDATE videos'), 'n', 'd', 3);
+  });
+
+  it('stores only the file name, so the clip survives a changed container path', async () => {
+    mockDb.runAsync.mockResolvedValue({ lastInsertRowId: 1 });
+    await insertVideo({
+      name: 'a',
+      description: '',
+      uri: 'file:///var/mobile/Containers/Data/Application/OLD-UUID/Documents/clip-1.mp4',
+      startSec: 1,
+    });
+    expect(mockDb.runAsync.mock.calls[0]).toContain('clip-1.mp4');
   });
 });
