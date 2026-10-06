@@ -1,39 +1,39 @@
 # Video Diary App — Implementation Plan
 
-Stack: Expo (SDK 57), Expo Router, Zustand, TanStack Query, expo-trim-video, NativeWind, expo-video, expo-sqlite, Zod. Commits follow Conventional Commits.
+Stack: Expo (SDK 57), Expo Router, Zustand, TanStack Query, expo-trim-video, NativeWind, expo-video, expo-sqlite, Reanimated, Zod. Commits follow Conventional Commits. The architecture is described in the README. Every step below is implemented.
 
 ## Step 1 — Project foundation
 
-Expo + TypeScript scaffold, NativeWind, commitlint + husky, folder layout (`src/app`, `src/features`, `src/shared`, `src/core`; see README). Done.
+Expo + TypeScript, NativeWind, ESLint + Prettier, commitlint + husky, feature-based folder layout (`src/app`, `src/features`, `src/shared`, `src/core`) with an architecture test that enforces it.
 
 ## Step 2 — Data layer
 
-SQLite `videos` table, repo (list/get/insert/update), TanStack Query hooks, Zod metadata schema, Zustand crop store, `useTrimVideo` mutation. Scaffolded; needs unit tests for schema and repo mapping.
+SQLite `videos` table with versioned migrations (`core/db`), `videos/api/repo.ts` (paged list, count, get, insert, update), TanStack Query hooks in `api/queries.ts`, Zod metadata schema in `videos/model`, Zustand crop store in `crop/model`, `useTrimVideo` mutation in `crop/api`.
 
 ## Step 3 — Crop modal: video selection
 
-Implement `/crop` screen: pick a video with expo-image-picker, read duration, store in `useCropStore`, navigate to `/crop/trim`. Reject videos shorter than 5 seconds.
+`/crop`: pick a video with expo-image-picker, read its duration, store it in `useCropStore`, go to `/crop/trim`. Videos shorter than 5 seconds are rejected.
 
 ## Step 4 — Crop modal: scrubber
 
-Implement `/crop/trim`: reusable `VideoPlayer` (expo-video) plus `Scrubber` that selects the start of a fixed 5-second window; preview loops the window; "Next" button below the scrubber goes to `/crop/metadata`.
+`/crop/trim`: reusable `VideoPlayer` (expo-video) plus `Scrubber`, a slider for the start of the fixed 5-second window (the end follows). A filmstrip shows frames of the source, the preview loops the window, and a "Next" button below the scrubber goes to `/crop/metadata`.
 
 ## Step 5 — Crop modal: metadata and crop execution
 
-Implement `/crop/metadata`: reusable `MetadataForm` (name input, description textarea) validated with Zod; submit runs `useTrimVideo` (TanStack Query mutation around `trimVideo`), then `useSaveVideo`, resets the crop store and returns to the list. Show loading and error states.
+`/crop/metadata`: reusable `MetadataForm` (name input, description textarea) validated with Zod. Submit runs `useTrimVideo` (a TanStack Query mutation around `trimVideo`), then `useSaveVideo`, resets the crop store and returns to the list. Loading and error states are shown; if saving fails, the trimmed file is deleted.
 
 ## Step 6 — Main screen: video list
 
-Implement `/` with a virtualized list (FlashList) of saved videos from SQLite via `useVideos`, empty state, "New video" button opening `/crop`, tap navigates to `/video/[id]`.
+`/`: FlashList of saved clips read page by page from SQLite (`useVideos`, infinite query), thumbnails for visible rows only, empty state, "New video" button opening `/crop`, tap opens `/videos/[id]`.
 
 ## Step 7 — Details page
 
-Implement `/video/[id]`: `VideoPlayer` with the cropped clip, name and description, minimal UI, link to edit.
+`/videos/[id]`: `VideoPlayer` with the cropped clip, name, description and a link to edit. Minimal UI.
 
 ## Step 8 — Edit page
 
-Implement `/edit/[id]`: reuse `MetadataForm`, persist with `useUpdateMetadata`, invalidate queries.
+`/videos/[id]/edit`: reuses `MetadataForm`, persists with `useUpdateMetadata`, patches the cached list and detail in place.
 
 ## Step 9 — Animations, tests and documentation
 
-Add React Native Reanimated list/entry animations, tests for schema/store/repo, README with setup (dev build required for expo-trim-video), usage and Conventional Commits guide.
+Reanimated entry animations for list rows and form errors. Tests for schema, store, repo, migrations, query hooks, controller hooks and the architecture rules. README with setup (a development build is required for expo-trim-video), usage, architecture and the Conventional Commits guide.

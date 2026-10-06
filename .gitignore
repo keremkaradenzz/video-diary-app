@@ -41,3 +41,6 @@ example
 # generated native folders
 /ios
 /android
+
+# pnpm users generate their own lockfile; package-lock.json is the committed one (see README)
+pnpm-lock.yaml

@@ -13,12 +13,12 @@ Expo (SDK 57) · Expo Router · Zustand · TanStack Query · expo-trim-video · 
 npm install
 npx expo run:ios      # or: npx expo run:android
 
-# pnpm (Node 18.12+ for pnpm 10; the latest pnpm needs Node 22.13+)
+# pnpm
 pnpm install
 pnpm exec expo run:ios      # or: pnpm exec expo run:android
 ```
 
-Both lockfiles are committed (`package-lock.json`, `pnpm-lock.yaml`); use whichever you prefer. pnpm is set to a flat `node_modules` (`.npmrc`, `pnpm-workspace.yaml`) because Metro and React Native libraries expect it. Add packages with `npx expo install --npm <package>` or `pnpm exec expo install --pnpm <package>` and the matching lockfile updates; the other one needs the same change (run `npm install --package-lock-only` or `pnpm install --lockfile-only`). Scripts such as `npm test` work the same with `pnpm test`.
+`package-lock.json` is the committed lockfile (EAS Build and `expo-doctor` expect a single one). pnpm works too: `pnpm install` creates its own `pnpm-lock.yaml`, which is git-ignored. pnpm is set to a flat `node_modules` (`.npmrc`, `pnpm-workspace.yaml`) because Metro and React Native libraries expect it, and `packageManager` in `package.json` pins pnpm 10 so it runs on Node 20. Add packages with `npx expo install <package>` (or `pnpm exec expo install --pnpm <package>`); scripts such as `npm test` work the same with `pnpm test`.
 
 `expo-trim-video` is a native module, so the app needs a **development build**. Expo Go will not work.
 
@@ -32,6 +32,16 @@ Scripts: `npm test`, `npm run typecheck`, `npm run lint`.
 2. Drag the slider to pick where the 5-second segment starts. The preview loops that segment.
 3. Tap **Next**, enter a name and description, then tap **Crop & save**.
 4. Open a video from the list to see its details. Tap **Edit** to change its name or description.
+
+## Design decisions
+
+- **Persistence:** clips live in SQLite (`expo-sqlite`) rather than Zustand + AsyncStorage. It gives an indexed, paged, newest-first query that keeps a growing list cheap. The schema is versioned with append-only migrations.
+- **Zustand** holds only the transient crop wizard state (picked video, its duration, start second) and is reset when the modal closes. It is not persisted.
+- **TanStack Query** runs the asynchronous work: `trimVideo` is a mutation, list/detail reads are queries (the list is an infinite query), and thumbnails are queries cached on disk.
+- **Scrubber:** the clip length is fixed at 5 seconds, so a single slider picks the start and the end is derived (plus ±1 s nudge buttons). A two-handle range would only allow lengths the app rejects.
+- **Validation:** one Zod schema validates both the create and the edit form; its messages are i18n keys.
+- **Clip files** are stored by file name and resolved against the document directory when read, because the app container path changes between installs and updates on iOS. If saving a clip fails after trimming, the trimmed file is deleted.
+- **Scale:** paged queries, thumbnails only for visible rows, a virtualized list (FlashList), and feature folders with enforced boundaries.
 
 ## Architecture
 
