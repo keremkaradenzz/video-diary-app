@@ -69,15 +69,6 @@
     "test": "jest"
   },
   "private": true,
-  "jest": {
-    "preset": "jest-expo",
-    "setupFiles": [
-      "<rootDir>/src/test/setup.ts"
-    ],
-    "moduleNameMapper": {
-      "^@/(.*)$": "<rootDir>/src/$1"
-    }
-  },
   "lint-staged": {
     "*.{ts,tsx,js}": [
       "eslint --fix",

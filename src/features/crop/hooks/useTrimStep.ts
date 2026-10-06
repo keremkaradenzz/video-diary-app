@@ -1,10 +1,10 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
 
-import { useFilmstrip } from '@/features/crop/data/queries';
-import { useCropStore } from '@/features/crop/data/store';
-import { CLIP_SECONDS } from '@/shared/constants';
-import { useClipPlayer } from '@/shared/hooks/useClipPlayer';
+import { useFilmstrip } from '@/features/crop/api/queries';
+import { useCropStore } from '@/features/crop/model/store';
+import { CLIP_SECONDS } from '@/core/config';
+import { useClipPlayer } from '@/shared/media/hooks/useClipPlayer';
 
 import { useRequireSource } from './useRequireSource';
 

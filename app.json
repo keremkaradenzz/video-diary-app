@@ -7,7 +7,7 @@
     "icon": "./assets/images/icon.png",
     "scheme": "videodiaryapp",
     "platforms": ["ios", "android"],
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "light",
     "ios": {
       "icon": "./assets/expo.icon",
       "bundleIdentifier": "com.keremkaradenzz.video-diary-app"

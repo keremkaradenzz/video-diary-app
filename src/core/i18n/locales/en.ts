@@ -15,12 +15,10 @@ export const en = {
     newVideo: 'New video',
   },
   details: {
-    title: 'Details',
     edit: 'Edit',
     meta: '{{date}} · {{seconds}} s',
   },
   edit: {
-    title: 'Edit',
     heading: 'Edit clip',
     save: 'Save',
   },

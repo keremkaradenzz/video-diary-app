@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { useCropStore } from '@/features/crop/data/store';
+import { useCropStore } from '@/features/crop/model/store';
 
 /** Clears the crop flow state once the crop modal is dismissed. */
 export function useResetCropOnExit() {

@@ -1,1 +1,1 @@
-export { SelectStep } from './SelectStep.component';
+export { SelectStep } from './SelectStep';

@@ -4,7 +4,7 @@ Stack: Expo (SDK 57), Expo Router, Zustand, TanStack Query, expo-trim-video, Nat
 
 ## Step 1 — Project foundation
 
-Expo + TypeScript scaffold, NativeWind, commitlint + husky, folder layout (`src/app`, `src/features`, `src/components`, `src/lib`). Done.
+Expo + TypeScript scaffold, NativeWind, commitlint + husky, folder layout (`src/app`, `src/features`, `src/shared`, `src/core`; see README). Done.
 
 ## Step 2 — Data layer
 

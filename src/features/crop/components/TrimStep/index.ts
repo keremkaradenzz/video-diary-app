@@ -1,1 +1,1 @@
-export { TrimStep } from './TrimStep.component';
+export { TrimStep } from './TrimStep';

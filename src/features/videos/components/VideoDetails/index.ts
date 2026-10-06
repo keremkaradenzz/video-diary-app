@@ -1,1 +1,1 @@
-export { VideoDetails } from './VideoDetails.component';
+export { VideoDetails } from './VideoDetails';

@@ -1,8 +1,8 @@
 import { router } from 'expo-router';
 
-import { CLIP_SECONDS } from '@/shared/constants';
-import type { Video } from '@/features/videos/data/types';
-import { useClipPlayer } from '@/shared/hooks/useClipPlayer';
+import { CLIP_SECONDS } from '@/core/config';
+import type { Video } from '@/features/videos/model/types';
+import { useClipPlayer } from '@/shared/media/hooks/useClipPlayer';
 
 /** `video` may still be loading; the player is created with no source until it arrives. */
 export function useVideoDetails(video: Video | undefined) {

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
-import { validateMetadata, type Metadata, type MetadataErrors } from '@/features/videos/data/schema';
-import type { MetadataFormFields } from '@/features/videos/data/types';
+import { validateMetadata, type Metadata, type MetadataErrors } from '@/features/videos/model/schema';
+import type { MetadataFormFields } from '@/features/videos/model/types';
 
 /** Form state + validation. The returned object matches the props of `MetadataForm`. */
 export function useMetadataForm(

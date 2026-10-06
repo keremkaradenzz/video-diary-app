@@ -18,12 +18,10 @@ export const tr: typeof en = {
     newVideo: 'Yeni video',
   },
   details: {
-    title: 'Detaylar',
     edit: 'Düzenle',
     meta: '{{date}} · {{seconds}} sn',
   },
   edit: {
-    title: 'Düzenle',
     heading: 'Klibi düzenle',
     save: 'Kaydet',
   },

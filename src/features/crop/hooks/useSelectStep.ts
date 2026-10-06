@@ -3,8 +3,8 @@ import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useCropStore } from '@/features/crop/data/store';
-import { CLIP_SECONDS } from '@/shared/constants';
+import { useCropStore } from '@/features/crop/model/store';
+import { CLIP_SECONDS } from '@/core/config';
 
 export function useSelectStep() {
   const { t } = useTranslation();

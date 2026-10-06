@@ -1,11 +1,10 @@
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 
-import { CLIP_SECONDS } from '@/shared/constants';
-import { isTrimUnavailable, useClipThumbnail, useTrimVideo } from '@/features/crop/data/queries';
-import { useCropStore } from '@/features/crop/data/store';
-import { useMetadataForm } from '@/features/videos/hooks/useMetadataForm';
-import { useSaveVideo } from '@/features/videos/data/queries';
+import { CLIP_SECONDS } from '@/core/config';
+import { isTrimUnavailable, useClipThumbnail, useTrimVideo } from '@/features/crop/api/queries';
+import { useCropStore } from '@/features/crop/model/store';
+import { useMetadataForm, useSaveVideo } from '@/features/videos';
 
 import { deleteFile, deleteIfCached } from '@/shared/utils/files';
 

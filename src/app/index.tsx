@@ -1,7 +1,6 @@
-import { Loader } from '@/shared/components/Loader';
-import { Notice } from '@/shared/components/Notice';
-import { VideoList } from '@/features/videos/components/VideoList';
-import { useVideoList } from '@/features/videos/hooks/useVideoList';
+import { Loader } from '@/shared/ui/Loader';
+import { Notice } from '@/shared/ui/Notice';
+import { VideoList, useVideoList } from '@/features/videos';
 
 export default function HomeScreen() {
   const { isLoading, error, ...view } = useVideoList();

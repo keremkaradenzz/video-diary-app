@@ -1,1 +1,1 @@
-export { Filmstrip } from './Filmstrip.component';
+export { Filmstrip } from './Filmstrip';

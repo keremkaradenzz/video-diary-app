@@ -1,1 +1,1 @@
-export { Scrubber } from './Scrubber.component';
+export { Scrubber } from './Scrubber';

@@ -1,5 +1,4 @@
-import { MetadataStep } from '@/features/crop/components/MetadataStep';
-import { useMetadataStep } from '@/features/crop/hooks/useMetadataStep';
+import { MetadataStep, useMetadataStep } from '@/features/crop';
 
 export default function MetadataStepScreen() {
   const { ready, ...view } = useMetadataStep();

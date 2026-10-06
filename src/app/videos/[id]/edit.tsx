@@ -1,11 +1,8 @@
 import { useTranslation } from 'react-i18next';
 
-import { Loader } from '@/shared/components/Loader';
-import { Notice } from '@/shared/components/Notice';
-import { EditVideo } from '@/features/videos/components/EditVideo';
-import { useEditVideo } from '@/features/videos/hooks/useEditVideo';
-import { useRouteVideo } from '@/features/videos/hooks/useRouteVideo';
-import type { Video } from '@/features/videos/data/types';
+import { Loader } from '@/shared/ui/Loader';
+import { Notice } from '@/shared/ui/Notice';
+import { EditVideo, useEditVideo, useRouteVideo, type Video } from '@/features/videos';
 
 export default function EditVideoScreen() {
   const { t } = useTranslation();

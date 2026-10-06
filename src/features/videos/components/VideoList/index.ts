@@ -1,1 +1,1 @@
-export { VideoList } from './VideoList.component';
+export { VideoList } from './VideoList';

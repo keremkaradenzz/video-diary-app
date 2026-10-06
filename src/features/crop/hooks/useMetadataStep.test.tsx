@@ -2,9 +2,9 @@ import { act, renderHook, waitFor } from '@testing-library/react-native';
 import { router } from 'expo-router';
 import { trimVideo } from 'expo-trim-video';
 
-import { useCropStore } from '@/features/crop/data/store';
+import { useCropStore } from '@/features/crop/model/store';
 import { deleteFile } from '@/shared/utils/files';
-import { insertVideo } from '@/features/videos/data/repo';
+import { insertVideo } from '@/features/videos/api/repo';
 import i18n from '@/core/i18n';
 import { createQueryWrapper } from '@/test/queryWrapper';
 
@@ -24,7 +24,7 @@ jest.mock('expo-file-system', () => ({
     this.move = (...args: unknown[]) => mockMove(...args);
   }),
 }));
-jest.mock('@/features/videos/data/repo', () => ({
+jest.mock('@/features/videos/api/repo', () => ({
   insertVideo: jest.fn(),
   listVideos: jest.fn(),
   getVideo: jest.fn(),

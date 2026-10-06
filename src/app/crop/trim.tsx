@@ -1,5 +1,4 @@
-import { TrimStep } from '@/features/crop/components/TrimStep';
-import { useTrimStep } from '@/features/crop/hooks/useTrimStep';
+import { TrimStep, useTrimStep } from '@/features/crop';
 
 export default function TrimStepScreen() {
   const { ready, ...view } = useTrimStep();

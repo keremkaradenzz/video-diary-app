@@ -2,9 +2,9 @@ import type { ViewToken } from '@shopify/flash-list';
 import { router } from 'expo-router';
 import { useState } from 'react';
 
-import { useThumbnails, useVideoCount, useVideos } from '@/features/videos/data/queries';
-import type { Video } from '@/features/videos/data/types';
-import { CLIP_SECONDS } from '@/shared/constants';
+import { useThumbnails, useVideoCount, useVideos } from '@/features/videos/api/queries';
+import type { Video } from '@/features/videos/model/types';
+import { CLIP_SECONDS } from '@/core/config';
 
 export function useVideoList() {
   const { data, isPending, error, hasNextPage, isFetchingNextPage, fetchNextPage } = useVideos();

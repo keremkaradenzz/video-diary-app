@@ -1,1 +1,1 @@
-export { EditVideo } from './EditVideo.component';
+export { EditVideo } from './EditVideo';

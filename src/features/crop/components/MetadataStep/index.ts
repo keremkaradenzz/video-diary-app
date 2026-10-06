@@ -1,1 +1,1 @@
-export { MetadataStep } from './MetadataStep.component';
+export { MetadataStep } from './MetadataStep';

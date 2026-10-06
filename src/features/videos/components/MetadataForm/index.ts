@@ -1,1 +1,1 @@
-export { MetadataForm } from './MetadataForm.component';
+export { MetadataForm } from './MetadataForm';

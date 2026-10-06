@@ -1,5 +1,4 @@
-import { SelectStep } from '@/features/crop/components/SelectStep';
-import { useSelectStep } from '@/features/crop/hooks/useSelectStep';
+import { SelectStep, useSelectStep } from '@/features/crop';
 
 export default function SelectStepScreen() {
   return <SelectStep {...useSelectStep()} />;

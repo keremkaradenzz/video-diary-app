@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 import { useEffect } from 'react';
 
-import { useCropStore } from '@/features/crop/data/store';
+import { useCropStore } from '@/features/crop/model/store';
 
 /** Returns the picked video uri; sends the user back to step 1 if there is none. */
 export function useRequireSource() {
