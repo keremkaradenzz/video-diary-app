@@ -8,6 +8,7 @@ import { tr } from './locales/tr';
 const resources = { en: { translation: en }, tr: { translation: tr } };
 const device = getLocales()[0]?.languageCode ?? 'en';
 
+// eslint-disable-next-line import/no-named-as-default-member -- `use` is the instance method, not the named export
 i18n.use(initReactI18next).init({
   resources,
   lng: device in resources ? device : 'en',

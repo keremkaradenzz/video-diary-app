@@ -36,12 +36,12 @@ route (container)  ->  controller hook  ->  data hooks / store / repo
        +--------->  presentational component (props in, JSX out)
 ```
 
-| Layer | Where | May use |
-|---|---|---|
-| Container | `src/app/**` (route files, ~10 lines) | controller hooks, view components |
-| Controller hook | `src/features/*/hooks/` | router, store, queries, other hooks |
-| Data hooks | `src/features/*/data/` (`queries.ts`, `store.ts`) | repo, TanStack Query, Zustand |
-| Presentational | `src/shared/components/`, `src/features/*/components/` | props only; no router, store, queries, SQLite |
+| Layer           | Where                                                  | May use                                       |
+| --------------- | ------------------------------------------------------ | --------------------------------------------- |
+| Container       | `src/app/**` (route files, ~10 lines)                  | controller hooks, view components             |
+| Controller hook | `src/features/*/hooks/`                                | router, store, queries, other hooks           |
+| Data hooks      | `src/features/*/data/` (`queries.ts`, `store.ts`)      | repo, TanStack Query, Zustand                 |
+| Presentational  | `src/shared/components/`, `src/features/*/components/` | props only; no router, store, queries, SQLite |
 
 ```
 src/
@@ -71,8 +71,6 @@ Dependencies point one way: `app` -> `features` -> `shared`/`core`. `shared` and
 feature, and a feature's `data/` folder never imports components, hooks or the router.
 A new feature is a new folder with the same `components/`, `hooks/`, `data/` layout.
 
-
-
 Every component is a folder with the same three files:
 
 ```
@@ -86,20 +84,20 @@ Class names stay complete literal strings so Tailwind can find them (`tailwind.c
 
 ### Naming
 
-| What | Convention | Example |
-|---|---|---|
-| Component folder | `PascalCase/`, with `Name.component.tsx`, `name.styles.ts`, `index.ts` | `VideoList/VideoList.component.tsx` |
-| Styles file | `camelCase.styles.ts`, one `styles` object of literal class strings | `videoList.styles.ts` |
-| Hook file | `useXxx.ts`, file name = export | `useTrimStep.ts` |
-| Route file | lowercase, `[param]`, `_layout`; collection name is plural, same as the feature | `videos/[id]/edit.tsx` |
-| Route default export | `<Name>Screen` | `VideoDetailsScreen`, `TrimStepScreen` |
-| Crop step | route, hook and component share one name: `/crop/trim` -> `useTrimStep` -> `TrimStep` | `MetadataStep` |
-| Shared form | `MetadataForm` renders fields only and takes a `header` slot; `MetadataStep` and `EditVideo` fill it | |
-| Formatting | `.prettierrc.json`: single quotes, 110 columns (Tailwind IntelliSense reads single-quoted `styles` objects) | |
-| Data modules | lowercase noun, one role each, in the feature's `data/` folder | `repo.ts` (SQLite), `queries.ts` (TanStack Query hooks), `store.ts` (Zustand), `schema.ts` (Zod validation), `types.ts` (entity types), `constants.ts` |
-| Tests | next to the code, `*.test.ts` | `schema.test.ts` |
-| Imports | `@/` across folders, `./` inside a folder | |
-| `index.ts` | a single named re-export in component folders, or a module entry (`i18n/index.ts`, `db/index.ts`); never `export *` | |
+| What                 | Convention                                                                                                          | Example                                                                                                                                                |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Component folder     | `PascalCase/`, with `Name.component.tsx`, `name.styles.ts`, `index.ts`                                              | `VideoList/VideoList.component.tsx`                                                                                                                    |
+| Styles file          | `camelCase.styles.ts`, one `styles` object of literal class strings                                                 | `videoList.styles.ts`                                                                                                                                  |
+| Hook file            | `useXxx.ts`, file name = export                                                                                     | `useTrimStep.ts`                                                                                                                                       |
+| Route file           | lowercase, `[param]`, `_layout`; collection name is plural, same as the feature                                     | `videos/[id]/edit.tsx`                                                                                                                                 |
+| Route default export | `<Name>Screen`                                                                                                      | `VideoDetailsScreen`, `TrimStepScreen`                                                                                                                 |
+| Crop step            | route, hook and component share one name: `/crop/trim` -> `useTrimStep` -> `TrimStep`                               | `MetadataStep`                                                                                                                                         |
+| Shared form          | `MetadataForm` renders fields only and takes a `header` slot; `MetadataStep` and `EditVideo` fill it                |                                                                                                                                                        |
+| Formatting           | `.prettierrc.json`: single quotes, 110 columns (Tailwind IntelliSense reads single-quoted `styles` objects)         |                                                                                                                                                        |
+| Data modules         | lowercase noun, one role each, in the feature's `data/` folder                                                      | `repo.ts` (SQLite), `queries.ts` (TanStack Query hooks), `store.ts` (Zustand), `schema.ts` (Zod validation), `types.ts` (entity types), `constants.ts` |
+| Tests                | next to the code, `*.test.ts`                                                                                       | `schema.test.ts`                                                                                                                                       |
+| Imports              | `@/` across folders, `./` inside a folder                                                                           |                                                                                                                                                        |
+| `index.ts`           | a single named re-export in component folders, or a module entry (`i18n/index.ts`, `db/index.ts`); never `export *` |                                                                                                                                                        |
 
 `src/architecture.test.ts` enforces this, including the component folder layout. It also fails if a presentational component imports the router, store, queries, SQLite or a hook, if a container reaches into the data layer directly, if `videos` imports `crop`, or if `useQuery`/`useMutation` appear outside a `queries.ts`.
 

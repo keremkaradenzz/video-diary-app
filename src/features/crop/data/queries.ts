@@ -31,6 +31,7 @@ export const isTrimUnavailable = (error: unknown) =>
 // Only that specific failure is translated; any other error is rethrown untouched.
 function loadTrimVideo() {
   try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports -- must stay lazy, see above
     return (require('expo-trim-video') as typeof import('expo-trim-video')).trimVideo;
   } catch (error) {
     if (/Cannot find native module/i.test(String((error as Error)?.message))) {
