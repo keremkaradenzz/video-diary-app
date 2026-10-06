@@ -7,7 +7,7 @@ import { useCropStore } from '@/features/crop/data/store';
 import { useMetadataForm } from '@/features/videos/hooks/useMetadataForm';
 import { useSaveVideo } from '@/features/videos/data/queries';
 
-import { deleteIfCached } from '@/shared/utils/files';
+import { deleteFile, deleteIfCached } from '@/shared/utils/files';
 
 import { useRequireSource } from './useRequireSource';
 
@@ -24,7 +24,12 @@ export function useMetadataStep() {
     if (!sourceUri) return;
     try {
       const { uri } = await trim.mutateAsync({ uri: sourceUri, start: startSec });
-      await save.mutateAsync({ ...m, uri, startSec });
+      try {
+        await save.mutateAsync({ ...m, uri, startSec });
+      } catch (error) {
+        deleteFile(uri); // no row points at the trimmed clip, so do not leave it behind
+        throw error;
+      }
       deleteIfCached(sourceUri); // the picker's cache copy is no longer needed
       router.dismissTo('/');
     } catch {

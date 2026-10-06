@@ -3,6 +3,7 @@ import { router } from 'expo-router';
 import { trimVideo } from 'expo-trim-video';
 
 import { useCropStore } from '@/features/crop/data/store';
+import { deleteFile } from '@/shared/utils/files';
 import { insertVideo } from '@/features/videos/data/repo';
 import i18n from '@/core/i18n';
 import { createQueryWrapper } from '@/test/queryWrapper';
@@ -14,7 +15,7 @@ const mockMove = jest.fn();
 jest.mock('expo-router', () => ({
   router: { push: jest.fn(), replace: jest.fn(), back: jest.fn(), dismissTo: jest.fn() },
 }));
-jest.mock('@/shared/utils/files', () => ({ deleteIfCached: jest.fn() }));
+jest.mock('@/shared/utils/files', () => ({ deleteIfCached: jest.fn(), deleteFile: jest.fn() }));
 jest.mock('expo-trim-video', () => ({ trimVideo: jest.fn() }));
 jest.mock('expo-file-system', () => ({
   Paths: { document: 'doc' },
@@ -102,6 +103,19 @@ describe('useMetadataStep', () => {
 
     await waitFor(() => expect(result.current.error).toBe('boom'));
     expect(mockedInsert).not.toHaveBeenCalled();
+    expect(router.dismissTo).not.toHaveBeenCalled();
+  });
+
+  it('deletes the trimmed clip when saving it fails', async () => {
+    mockedTrim.mockResolvedValue({ uri: 'file:///tmp/t.mp4' });
+    mockedInsert.mockRejectedValue(new Error('db down'));
+    const { result } = setup();
+
+    act(() => result.current.form.onChangeName('Trip'));
+    act(() => result.current.form.onSubmit());
+
+    await waitFor(() => expect(result.current.error).toBe('db down'));
+    expect(deleteFile).toHaveBeenCalledWith(expect.stringMatching(/clip-\d+\.mp4$/));
     expect(router.dismissTo).not.toHaveBeenCalled();
   });
 });

@@ -101,7 +101,9 @@ Class names stay complete literal strings so Tailwind can find them (`tailwind.c
 
 `src/architecture.test.ts` enforces this, including the component folder layout. It also fails if a presentational component imports the router, store, queries, SQLite or a hook, if a container reaches into the data layer directly, if `videos` imports `crop`, or if `useQuery`/`useMutation` appear outside a `queries.ts`.
 
-Trimmed clips are copied into the app's document directory and listed from SQLite.
+Trimmed clips are moved into the app's document directory and listed from SQLite. If saving the row fails, the clip file is deleted again.
+
+The 5-second length is fixed, so the scrubber is a single slider for the start point; the end follows automatically (no two-handle range).
 
 ## i18n
 

@@ -7,7 +7,7 @@ import type { Video } from '@/features/videos/data/types';
 import { CLIP_SECONDS } from '@/shared/constants';
 
 export function useVideoList() {
-  const { data, isPending, hasNextPage, isFetchingNextPage, fetchNextPage } = useVideos();
+  const { data, isPending, error, hasNextPage, isFetchingNextPage, fetchNextPage } = useVideos();
   const { data: total = 0 } = useVideoCount();
   const videos = data ?? [];
   const [visibleIds, setVisibleIds] = useState<number[]>([]);
@@ -18,6 +18,7 @@ export function useVideoList() {
     total,
     thumbnails,
     isLoading: isPending,
+    error: error?.message ?? null,
     onSelect: (id: number) => router.push({ pathname: '/videos/[id]', params: { id } }),
     onEndReached: () => {
       if (hasNextPage && !isFetchingNextPage) void fetchNextPage();

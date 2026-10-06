@@ -6,7 +6,11 @@ import { File, Paths } from 'expo-file-system';
  * to clean up must not fail the action that triggered it.
  */
 export function deleteIfCached(uri: string) {
-  if (!uri.startsWith(Paths.cache.uri)) return;
+  if (uri.startsWith(Paths.cache.uri)) deleteFile(uri);
+}
+
+/** Best-effort delete, e.g. of a trimmed clip whose database row could not be saved. */
+export function deleteFile(uri: string) {
   try {
     const file = new File(uri);
     if (file.exists) file.delete();

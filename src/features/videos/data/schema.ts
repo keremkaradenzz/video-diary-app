@@ -21,7 +21,7 @@ export function validateMetadata(input: {
 }): { ok: true; data: Metadata } | { ok: false; errors: MetadataErrors } {
   const res = metadataSchema.safeParse(input);
   if (res.success) return { ok: true, data: res.data };
-  const f = res.error.flatten().fieldErrors;
+  const f = z.flattenError(res.error).fieldErrors;
   return {
     ok: false,
     errors: { name: f.name?.[0] as ValidationKey, description: f.description?.[0] as ValidationKey },
