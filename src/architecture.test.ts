@@ -23,7 +23,8 @@ const walk = (dir: string): string[] =>
   });
 
 const code = (dir: string) => walk(dir).filter((f) => /\.tsx?$/.test(f) && !f.includes('.test.'));
-const read = (f: string) => readFileSync(f, 'utf8');
+// Quotes are normalised so the import checks hold whichever style the formatter produces.
+const read = (f: string) => readFileSync(f, 'utf8').replace(/"/g, "'");
 
 const all = walk(__dirname);
 const presentational = all.filter((f) => /\/components\/.*\.component\.tsx$/.test(f));

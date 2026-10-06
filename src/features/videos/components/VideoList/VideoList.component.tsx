@@ -1,14 +1,14 @@
-import type { VideoThumbnail } from 'expo-video';
-import { FlashList } from '@shopify/flash-list';
-import { useTranslation } from 'react-i18next';
-import { Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { FlashList } from "@shopify/flash-list";
+import type { VideoThumbnail } from "expo-video";
+import { useTranslation } from "react-i18next";
+import { Text, View } from "react-native";
 
-import { Button } from '@/components/Button';
-import { VideoListItem } from '@/features/videos/components/VideoListItem';
-import type { Video } from '@/features/videos/types';
+import { Button } from "@/components/Button";
+import { Screen } from "@/components/Screen";
+import { VideoListItem } from "@/features/videos/components/VideoListItem";
+import type { Video } from "@/features/videos/types";
 
-import { styles } from './videoList.styles';
+import { styles } from "./videoList.styles";
 
 type Props = {
   videos: Video[];
@@ -19,39 +19,54 @@ type Props = {
   onCreate: () => void;
 };
 
-export function VideoList({ videos, thumbnails, clipSeconds, onSelect, onCreate }: Props) {
+export function VideoList({
+  videos,
+  thumbnails,
+  clipSeconds,
+  onSelect,
+  onCreate,
+}: Props) {
   const { t } = useTranslation();
-  const insets = useSafeAreaInsets();
   return (
-    <View className={styles.container}>
+    <Screen>
       <FlashList
         data={videos}
+        maintainVisibleContentPosition={{ disabled: true }}
         extraData={thumbnails}
         keyExtractor={(v) => String(v.id)}
         contentContainerClassName={styles.content}
         ListHeaderComponent={
-          <View className={styles.header} style={{ paddingTop: insets.top + 16 }}>
-            <Text className={styles.title}>{t('home.title')}</Text>
+          <View className={styles.header}>
+            <Text className={styles.title}>{t("home.title")}</Text>
             {videos.length > 0 && (
               <Text className={styles.summary}>
-                {t('home.summary', { count: videos.length, seconds: videos.length * clipSeconds })}
+                {t("home.summary", {
+                  count: videos.length,
+                  seconds: videos.length * clipSeconds,
+                })}
               </Text>
             )}
           </View>
         }
         ListEmptyComponent={
           <View className={styles.empty}>
-            <Text className={styles.emptyTitle}>{t('home.empty')}</Text>
-            <Text className={styles.emptyHint}>{t('home.emptyHint')}</Text>
+            <Text className={styles.emptyTitle}>{t("home.empty")}</Text>
+            <Text className={styles.emptyHint}>{t("home.emptyHint")}</Text>
           </View>
         }
         renderItem={({ item, index }) => (
-          <VideoListItem video={item} index={index} thumbnail={thumbnails[item.id]} duration={`0:${String(clipSeconds).padStart(2, '0')}`} onPress={() => onSelect(item.id)} />
+          <VideoListItem
+            video={item}
+            index={index}
+            thumbnail={thumbnails[item.id]}
+            duration={`0:${String(clipSeconds).padStart(2, "0")}`}
+            onPress={() => onSelect(item.id)}
+          />
         )}
       />
-      <View className={styles.bar} style={{ paddingBottom: Math.max(insets.bottom, 16) }}>
-        <Button label={t('home.newVideo')} onPress={onCreate} />
+      <View className={styles.bar}>
+        <Button label={t("home.newVideo")} onPress={onCreate} />
       </View>
-    </View>
+    </Screen>
   );
 }

@@ -1,5 +1,5 @@
 export const styles = {
-  container: 'flex-1 gap-4 p-4',
+  container: 'gap-4 px-4 pb-3',
   title: 'text-3xl font-extrabold text-slate-900',
   hint: 'text-base text-slate-600',
   drop: 'max-h-96 flex-1 items-center justify-center gap-2 rounded-3xl border-2 border-dashed border-slate-400 bg-white p-6',

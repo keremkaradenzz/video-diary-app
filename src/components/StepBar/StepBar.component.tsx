@@ -1,6 +1,5 @@
 import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { styles } from './stepBar.styles';
 
@@ -15,9 +14,8 @@ type Props = {
 /** Screen header for the crop flow: back/close button, "Step n / total" and a progress bar. */
 export function StepBar({ step, total = 3, onBack, closes }: Props) {
   const { t } = useTranslation();
-  const insets = useSafeAreaInsets();
   return (
-    <View className={styles.container} style={{ paddingTop: insets.top }}>
+    <View className={styles.container}>
       <View className={styles.row}>
         <Pressable
           onPress={onBack}

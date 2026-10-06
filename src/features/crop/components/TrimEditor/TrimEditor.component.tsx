@@ -1,9 +1,9 @@
 import type { VideoPlayer as Player, VideoThumbnail } from 'expo-video';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/Button';
+import { Screen } from '@/components/Screen';
 import { StepBar } from '@/components/StepBar';
 import { VideoPlayer } from '@/components/VideoPlayer';
 import { Filmstrip } from '@/features/crop/components/Filmstrip';
@@ -24,9 +24,8 @@ type Props = {
 
 export function TrimEditor({ player, frames, duration, startSec, clipLength, onChangeStart, onNext, onBack }: Props) {
   const { t } = useTranslation();
-  const insets = useSafeAreaInsets();
   return (
-    <View className={styles.container} style={{ paddingBottom: Math.max(insets.bottom, 16) }}>
+    <Screen className={styles.container}>
       <StepBar step={2} onBack={onBack} />
       <Text className={styles.title}>{t('crop.trimHeading', { seconds: clipLength })}</Text>
       <View className={styles.player}>
@@ -39,6 +38,6 @@ export function TrimEditor({ player, frames, duration, startSec, clipLength, onC
       <Scrubber duration={duration} start={startSec} clipLength={clipLength} onChange={onChangeStart} />
       <View className={styles.spacer} />
       <Button label={t('crop.next')} onPress={onNext} />
-    </View>
+    </Screen>
   );
 }

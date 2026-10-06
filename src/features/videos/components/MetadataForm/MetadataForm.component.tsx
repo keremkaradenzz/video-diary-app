@@ -3,9 +3,9 @@ import type { VideoThumbnail } from 'expo-video';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/Button';
+import { Screen } from '@/components/Screen';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { StepBar } from '@/components/StepBar';
 import { DESCRIPTION_MAX, NAME_MAX, type MetadataErrors } from '@/features/videos/schema';
@@ -33,11 +33,10 @@ type Props = {
 
 export function MetadataForm(p: Props) {
   const { t } = useTranslation();
-  const insets = useSafeAreaInsets();
   return (
+    <Screen>
     <ScrollView
       contentContainerClassName={styles.container}
-      contentContainerStyle={{ paddingBottom: Math.max(insets.bottom, 16) }}
       keyboardShouldPersistTaps="handled"
       automaticallyAdjustKeyboardInsets
     >
@@ -109,5 +108,6 @@ export function MetadataForm(p: Props) {
       )}
       <Button label={p.submitLabel} onPress={p.onSubmit} loading={p.loading} />
     </ScrollView>
+    </Screen>
   );
 }
