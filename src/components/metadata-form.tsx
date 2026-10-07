@@ -39,7 +39,7 @@ export function MetadataForm(p: Props) {
             maxLength={NAME_MAX + 20}
             editable={!p.loading}
             accessibilityLabel={t('form.name')}
-            className={`${styles.input} ${p.errors.name ? styles.inputError : ''}`}
+            className={`${styles.input} ${p.errors.name ? styles.inputError : styles.inputIdle}`}
           />
           {p.errors.name && (
             <Animated.Text entering={FadeInDown} className={styles.error}>
@@ -63,7 +63,7 @@ export function MetadataForm(p: Props) {
             textAlignVertical="top"
             editable={!p.loading}
             accessibilityLabel={t('form.description')}
-            className={`${styles.textarea} ${p.errors.description ? styles.inputError : ''}`}
+            className={`${styles.textarea} ${p.errors.description ? styles.inputError : styles.inputIdle}`}
           />
           {p.errors.description && (
             <Animated.Text entering={FadeInDown} className={styles.error}>
@@ -89,10 +89,13 @@ const styles = {
   label: 'text-base font-bold text-slate-900',
   optional: 'font-normal text-slate-600',
   counter: 'text-sm text-slate-600',
-  input:
-    'h-14 rounded-2xl border border-slate-300 bg-white px-4 pb-1 text-base text-slate-900 focus:border-2 focus:border-brand',
-  textarea:
-    'h-32 rounded-2xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 focus:border-2 focus:border-brand',
-  inputError: 'border-2 border-red-600',
+  // The border is always 2px wide so focusing (or an error) only changes its colour; a width
+  // change would shift the text inside the field by a pixel.
+  // `text-[16px]` sets only the font size. `text-base` also sets a 24px line height, which makes
+  // iOS draw the text and the caret at different heights in a single-line input.
+  input: 'h-14 rounded-2xl border-2 bg-white px-4 py-0 text-[16px] text-slate-900',
+  textarea: 'h-32 rounded-2xl border-2 bg-white px-4 py-3 text-base text-slate-900',
+  inputIdle: 'border-slate-300 focus:border-brand',
+  inputError: 'border-red-600',
   error: 'text-sm font-medium text-red-700',
 };
