@@ -4,7 +4,7 @@ Import a video, crop a 5-second segment, add a name and description, and keep it
 
 ## Stack
 
-Expo (SDK 57) · Expo Router · Zustand · TanStack Query · expo-trim-video · NativeWind · expo-video · expo-sqlite · Reanimated · Zod · FlashList · i18next
+Expo (SDK 57) · Expo Router · Zustand · TanStack Query · expo-trim-video · NativeWind · expo-video · expo-sqlite · Reanimated · Zod · FlashList · i18next · expo-haptics
 
 ## Setup
 

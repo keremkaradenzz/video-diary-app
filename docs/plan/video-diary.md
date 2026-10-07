@@ -8,7 +8,7 @@ Expo + TypeScript, NativeWind, ESLint + Prettier, commitlint + husky, the folder
 
 ## Step 2 — Data layer
 
-SQLite `videos` table with versioned migrations (`db`), `db/videos.ts` (paged list, count, get, insert, update), TanStack Query hooks in `api/queries.ts`, Zod metadata schema in `utils/video-schema.ts`, Zustand crop store in `hooks/use-crop-store.ts`, `useTrimVideo` mutation in `screens/metadata-step/hooks`.
+SQLite `videos` table with versioned migrations (`db`), `db/videos.ts` (paged list, count, get, insert, update), TanStack Query hooks in `hooks/` (`use-videos`, `use-video`, `use-save-video`, ...) with keys in `query/keys.ts`, Zod metadata schema in `utils/video-schema.ts`, Zustand crop store in `hooks/use-crop-store.ts`, `useTrimVideo` mutation in `screens/metadata-step/hooks`.
 
 ## Step 3 — Crop modal: video selection
 
