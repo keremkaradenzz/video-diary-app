@@ -1,5 +1,5 @@
 // expo-video needs its native module at import time, which Jest does not have.
-jest.mock('@/shared/media/utils/thumbnails', () => ({ generateThumbnails: jest.fn(async () => []) }));
+jest.mock('@/utils/thumbnails', () => ({ generateThumbnails: jest.fn(async () => []) }));
 
 // Feature barrels pull in every component, and Reanimated needs its native runtime at import time.
 // Components only use Animated.View/Text and the FadeInDown entering preset.

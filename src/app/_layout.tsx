@@ -1,14 +1,14 @@
-import '@/core/i18n';
-import '../global.css';
+import '@/i18n';
+import '../themes/global.css';
 
 import { QueryClientProvider } from '@tanstack/react-query';
 import { Stack, type ErrorBoundaryProps } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 
-import { getDb } from '@/core/db';
-import { queryClient } from '@/core/query';
-import { theme } from '@/core/theme';
-import { ErrorFallback } from '@/shared/ui/error-fallback';
+import { getDb } from '@/db';
+import { queryClient } from '@/query/client';
+import { theme } from '@/themes/theme';
+import { ErrorFallback } from '@/components/error-fallback';
 
 // A render error in any route shows this instead of a white screen; `retry` re-renders the route.
 export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {

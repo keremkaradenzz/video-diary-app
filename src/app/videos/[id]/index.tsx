@@ -1,14 +1,8 @@
-import { useTranslation } from 'react-i18next';
+import { useLocalSearchParams } from 'expo-router';
 
-import { Loader } from '@/shared/ui/loader';
-import { Notice } from '@/shared/ui/notice';
-import { VideoDetails, useRouteVideo, useVideoDetails } from '@/features/videos';
+import { VideoDetails } from '@/screens/video-details';
 
 export default function VideoDetailsScreen() {
-  const { t } = useTranslation();
-  const { video, isLoading } = useRouteVideo();
-  const details = useVideoDetails(video);
-  if (isLoading) return <Loader />;
-  if (!video) return <Notice text={t('common.notFound')} />;
-  return <VideoDetails video={video} {...details} />;
+  const { id } = useLocalSearchParams<{ id: string }>();
+  return <VideoDetails id={Number(id)} />;
 }

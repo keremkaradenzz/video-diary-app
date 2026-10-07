@@ -4,7 +4,7 @@ Import a video, crop a 5-second segment, add a name and description, and keep it
 
 ## Stack
 
-Expo (SDK 57) · Expo Router · Zustand · TanStack Query · expo-trim-video · NativeWind · expo-video · expo-sqlite · Reanimated · Zod · FlashList
+Expo (SDK 57) · Expo Router · Zustand · TanStack Query · expo-trim-video · NativeWind · expo-video · expo-sqlite · Reanimated · Zod · FlashList · i18next
 
 ## Setup
 
@@ -26,7 +26,7 @@ pnpm exec expo run:ios      # or: pnpm exec expo run:android
 
 The app targets **iOS and Android only** (`platforms` in `app.json`). Web is disabled on purpose: `expo-trim-video` has no web implementation, and `expo-sqlite` on web needs extra wasm and header setup.
 
-Scripts: `npm test`, `npm run typecheck`, `npm run lint`.
+Scripts: `npm test`, `npm run typecheck`, `npm run lint`, `npm run format:check`, and `npm run verify` (typecheck, lint and tests in one go).
 
 ## Usage
 
@@ -37,20 +37,22 @@ Scripts: `npm test`, `npm run typecheck`, `npm run lint`.
 
 ## Features
 
-| Feature                                                     | Where                                                                                             |
-| ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| List of saved clips, persisted, tap opens the details       | `/` (`videos/ui/video-list`), SQLite via `videos/api/repo.ts`, row tap goes to `/videos/[id]`     |
-| Details: video, name, description                           | `/videos/[id]` (`videos/ui/video-details`)                                                        |
-| Pick a video from the device                                | `/crop` (`crop/ui/select-step`, `expo-image-picker`)                                              |
-| Choose the 5 s segment with a scrubber, then continue       | `/crop/trim` (`video-player`, `filmstrip`, `scrubber`, **Next**)                                  |
-| Name and description form, then crop and save               | `/crop/metadata` (`metadata-form`, **Crop & save**)                                               |
-| Cropping with `expo-trim-video`, run through TanStack Query | `useTrimVideo`, a `useMutation` in `crop/api/queries.ts`                                          |
-| Edit name and description                                   | `/videos/[id]/edit` (`edit-video`, reuses `metadata-form`)                                        |
-| Validation with Zod                                         | one schema for the create and edit forms, inline error messages                                   |
-| Animations with Reanimated                                  | list row entry and error messages                                                                 |
-| Delete a clip                                               | `/videos/[id]` (**Delete**, confirmation first): row removed, then the file                       |
-| Growing lists stay fast                                     | keyset-paged infinite query (no skipped or doubled rows), lazy thumbnails, FlashList              |
-| Simple navigation and styling                               | 3-step modal with a step bar, safe areas, loading and error states; NativeWind classes throughout |
+| Feature                                                     | Where                                                                                                                      |
+| ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| List of saved clips, persisted, tap opens the details       | `/` (`screens/home`), SQLite via `db/videos.ts`, row tap goes to `/videos/[id]`                                            |
+| Details: video, name, description                           | `/videos/[id]` (`screens/video-details`)                                                                                   |
+| Pick a video from the device                                | `/crop` (`screens/select-step`, `expo-image-picker`)                                                                       |
+| Choose the 5 s segment with a scrubber, then continue       | `/crop/trim` (`screens/trim-step`: `video-player`, `filmstrip`, `scrubber`, **Next**)                                      |
+| Name and description form, then crop and save               | `/crop/metadata` (`screens/metadata-step`, `components/metadata-form`, **Crop & save**)                                    |
+| Cropping with `expo-trim-video`, run through TanStack Query | `useTrimVideo`, a `useMutation` in `screens/metadata-step/hooks/use-trim-video.ts`                                         |
+| Edit name and description                                   | `/videos/[id]/edit` (`screens/edit-video`, reuses `components/metadata-form`)                                              |
+| Validation with Zod                                         | one schema for the create and edit forms, inline error messages                                                            |
+| Animations with Reanimated                                  | list row entry and error messages                                                                                          |
+| Delete a clip                                               | `/videos/[id]` (`screens/video-details/hooks/use-confirm-delete.ts`, confirmation first): row removed, then the file       |
+| Reusable components                                         | `components/`: `video-player` (trim step, details), `metadata-form` (create, edit), `clip-thumbnail`, `step-bar`, `button` |
+| Growing lists stay fast                                     | keyset-paged infinite query (no skipped or doubled rows), lazy thumbnails, FlashList                                       |
+| English and Turkish UI                                      | `src/i18n/locales/`, the language follows the device, keys are type-checked                                                |
+| Simple navigation and styling                               | 3-step modal with a step bar, safe areas, loading and error states; NativeWind classes throughout                          |
 
 ## Design decisions
 
@@ -61,114 +63,149 @@ Scripts: `npm test`, `npm run typecheck`, `npm run lint`.
 - **Validation:** one Zod schema validates both the create and the edit form; its messages are i18n keys.
 - **Clip files** are stored by file name and resolved against the document directory when read, because the app container path changes between installs and updates on iOS. If saving a clip fails after trimming, the trimmed file is deleted.
 - **Errors:** a render error in any route shows a translated fallback with a retry button (`ErrorBoundary` in `app/_layout.tsx`); failures of the trim, the database or the list show up as messages in the screen that triggered them.
-- **Scale:** paged queries, thumbnails only for visible rows, a virtualized list (FlashList), and feature folders with enforced boundaries.
+- **Scale:** paged queries, thumbnails only for visible rows, a virtualized list (FlashList), and a folder layout whose import directions are enforced by a test.
 
 ## Architecture
 
-Feature-based architecture in the style of [Bulletproof React](https://github.com/alan2207/bulletproof-react), borrowing the layer rule, segment names (`ui`, `api`, `model`) and public-API rule from [Feature-Sliced Design](https://feature-sliced.design). Container/Presentational for screens, hooks for logic, one folder per feature.
-
-```
-route (container)  ->  controller hook  ->  api (SQLite, TanStack Query) / model (Zod, types, Zustand)
-       |
-       +--------->  presentational component (props in, JSX out)
-```
-
-| Layer           | Where                                                                 | May use                                       |
-| --------------- | --------------------------------------------------------------------- | --------------------------------------------- |
-| Container       | `src/app/**` (route files, ~10 lines)                                 | a feature's public API (`@/features/<name>`)  |
-| Controller hook | `src/features/*/hooks/`                                               | router, `api`, `model`, other hooks           |
-| API             | `src/features/*/api/` (`repo.ts` SQLite, `queries.ts` TanStack Query) | `model`, `core`, `shared`                     |
-| Model           | `src/features/*/model/` (`schema.ts`, `types.ts`, `store.ts`)         | pure code only; never `api`, UI or the router |
-| Presentational  | `src/features/*/ui/`, `src/shared/ui/`, `src/shared/media/ui/`        | props only; no router, store, queries, SQLite |
+The folder layout starts from Expo's guide, [How to organize Expo app folder structure](https://expo.dev/blog/expo-app-folder-structure-best-practices): a `src/` folder, routes in `src/app` that only render a screen, a `components/` folder for reusable UI, a `screens/` folder for the UI of each route, and `hooks/` and `utils/`. It goes one step further for a project of this size: **a screen folder has the same shape as `src/` itself** (`components/` and `hooks/`), so every piece of code has one obvious place, and `src/` holds only folders (no loose files).
 
 ```
 src/
-  app/            routes only (containers): /, /videos/[id], /videos/[id]/edit, /crop/*
-  features/       domain code, one folder per feature, each with a public API in index.ts
-    crop/         the "create a clip" flow; depends on videos, never the reverse
-      api/        queries (TanStack Query: filmstrip, trim mutation, clip thumbnail)
-      model/      store (Zustand wizard state)
-      hooks/      use-select-step, use-trim-step, use-metadata-step, guards
-      ui/         select-step, trim-step, metadata-step, scrubber, filmstrip
-    videos/
-      api/        repo (SQLite), queries (TanStack Query)
-      model/      schema (Zod), types
-      hooks/      use-video-list, use-video-details, use-edit-video, use-metadata-form, use-route-video
-      ui/         video-list, video-list-item, video-details, edit-video, metadata-form
-  shared/         domain-agnostic code any feature may use
-    ui/           button, error-fallback, loader, notice, screen, screen-header, step-bar
-                  (Screen is the only place that applies safe-area padding)
-    media/        video and image helpers: ui/ (video-player, clip-thumbnail),
-                  hooks/ (use-clip-player), utils/ (thumbnails)
-    utils/        files, format-date
-  core/           app infrastructure, below everything else
-    config.ts     app-wide constants (CLIP_SECONDS)
-    db/           connection (index.ts), migrate.ts, migrations.ts (append-only)
-    i18n/         setup (index.ts) and locales/ (en.ts, tr.ts)
-    query/        the shared QueryClient
-    theme/        colors.json (single palette source, also read by tailwind.config.js) and theme
-  test/           Jest setup, shared helpers, architecture.test.ts
+  app/                  routes only: each file renders one screen (URL params are read here)
+    _layout.tsx           root stack, QueryClientProvider, splash screen, ErrorBoundary
+    index.tsx             /                  -> <Home />
+    videos/[id]/index.tsx /videos/[id]       -> <VideoDetails id />
+    videos/[id]/edit.tsx  /videos/[id]/edit  -> <EditVideo id />
+    crop/                 _layout, index (SelectStep), trim (TrimStep), metadata (MetadataStep)
+  screens/              what each route shows; one folder per screen, always the same three entries
+    home/                 index.tsx, components/ (video-list, video-list-item), hooks/ (use-video-list)
+    video-details/        index.tsx, hooks/ (use-video-details, use-confirm-delete)
+    edit-video/           index.tsx, hooks/ (use-edit-video)
+    select-step/          index.tsx, hooks/ (use-select-step)
+    trim-step/            index.tsx, components/ (filmstrip, scrubber), hooks/ (use-trim-step, use-filmstrip)
+    metadata-step/        index.tsx, hooks/ (use-metadata-step, use-trim-video, use-clip-thumbnail)
+  components/           reusable UI, props in and JSX out: button, screen, screen-header, step-bar,
+                        loader, notice, error-fallback, video-player, clip-thumbnail, metadata-form
+  hooks/                building blocks, not tied to one screen: data access (use-videos, use-video,
+                        use-video-count, use-thumbnails, use-save-video, use-update-metadata,
+                        use-delete-video) and shared behaviour (use-metadata-form, use-crop-store,
+                        use-clip-player, use-require-source, use-reset-crop-on-exit)
+  db/                   SQLite: index.ts (connection), migrate.ts, migrations.ts, videos.ts (queries)
+  query/                TanStack Query setup: client.ts, keys.ts
+  i18n/                 index.ts, locales/ (en.ts, tr.ts)
+  utils/                small helpers: files, format-date, thumbnails, video-schema (Zod)
+  constants/            config.ts (CLIP_SECONDS)
+  themes/               theme.ts, colors.json (also read by tailwind.config.js), global.css (Tailwind entry)
+  types/                video.ts (Video, MetadataFormFields)
+  test/                 Jest setup, query-wrapper (test helper), architecture.test.ts
 ```
 
-Dependencies point one way: `app` -> `features` -> `shared` -> `core`. `shared` and `core` never import a
-feature, and `core` never imports `shared`. A feature's `api/` and `model/` never import ui, hooks or
-the router, and `model/` never imports `api/`.
+A component is a single file named after it (`components/button.tsx`). It would become a folder with an
+`index.tsx` only if it grew parts of its own. Styles are an object at the bottom of the component file, and
+tests sit next to the code (`name.test.ts(x)`). Imports use the template's single alias, `@/`
+(`@/components/button`, `@/db/videos`), configured in `tsconfig.json` and mirrored in `jest.config.js`.
 
-**Public API.** Each feature exposes what others may use from its `index.ts` (named exports only). Routes
-and other features import `@/features/videos`, never `@/features/videos/hooks/...`, so a feature's inner
-folders can be reorganised without touching callers. A new feature is a new folder with the same layout.
+**Routes vs screens.** `app/` and `screens/` are two halves of every page. Expo Router turns every file in
+`app/` into a route, so nothing but route files can live there. A route file only maps an address to a screen
+(and reads URL params); the screen holds the UI and the logic.
 
-**Schema changes.** Add a new entry to `core/db/migrations.ts`; never edit one that has shipped. `migrate.ts`
-runs the entries a database has not seen yet and records progress in `PRAGMA user_version`.
-
-**Colors.** Edit `src/core/theme/colors.json`. Use class names (`bg-brand`, `bg-surface`) where possible and
-`theme.colors.*` for props that cannot take a class (Slider tint, navigator background).
-
-Every component is a folder with the same files (the `table/index.tsx` pattern from Expo's
-[folder structure guide](https://expo.dev/blog/expo-app-folder-structure-best-practices)):
-
-```
-button/
-  index.tsx           export function Button(...) { ... }   (import it as '@/shared/ui/button')
-  button.styles.ts    export const styles = { container: '...', label: '...' }
+```tsx
+// src/app/videos/[id]/index.tsx: the route, 6 lines
+export default function VideoDetailsScreen() {
+  const { id } = useLocalSearchParams<{ id: string }>();
+  return <VideoDetails id={Number(id)} />;
+}
 ```
 
-Class names stay complete literal strings so Tailwind can find them (`tailwind.config.js` scans `src/**/*.{ts,tsx}`). `.vscode/settings.json` points Tailwind IntelliSense at `styles = { ... }` objects. Tests sit next to the code as `name.test.tsx`.
+| Route (`app/`)      | Screen (`screens/`) | What it does                          |
+| ------------------- | ------------------- | ------------------------------------- |
+| `/`                 | `home`              | clip list and the "New video" button  |
+| `/videos/[id]`      | `video-details`     | plays a clip; edit and delete         |
+| `/videos/[id]/edit` | `edit-video`        | edits name and description            |
+| `/crop`             | `select-step`       | step 1: pick a video from the library |
+| `/crop/trim`        | `trim-step`         | step 2: choose the 5 second window    |
+| `/crop/metadata`    | `metadata-step`     | step 3: name it, crop and save        |
+
+The `_layout.tsx` files (navigation structure, error fallback, splash screen) stay in `app/` because they frame
+routes rather than show a screen.
+
+**Where does code go?**
+
+| Code                                                             | Place                       |
+| ---------------------------------------------------------------- | --------------------------- |
+| A screen's own UI parts                                          | that screen's `components/` |
+| A screen's own flow: navigation, steps, local state              | that screen's `hooks/`      |
+| UI used by several screens                                       | `components/`               |
+| Data access (queries, mutations) and behaviour shared by screens | `hooks/`                    |
+| SQL and migrations                                               | `db/`                       |
+| Pure helpers, validation, file helpers                           | `utils/`                    |
+| Palette, theme object, Tailwind CSS entry                        | `themes/`                   |
+
+**Screen hooks vs `hooks/`.** A hook in `screens/<name>/hooks/` is that screen's controller: it answers "what
+happens on this screen" (`use-trim-step` pushes the next route and holds the dragged slider value;
+`use-confirm-delete` asks, deletes and goes back). A hook in `hooks/` is a building block that answers "how is this
+done" (`use-delete-video` removes a row and its file, `use-clip-player` creates a looping player). Screen hooks call
+the building blocks, never the other way round, and a screen never imports another screen's hooks. Data access sits
+in `hooks/` even when only one screen uses it today, so there is a single place to look for how the app reads and
+writes videos.
+
+**Import direction** (`src/test/architecture.test.ts`):
+
+```
+app  ->  screens  ->  components / hooks  ->  db, query, utils, themes  ->  constants, types
+```
+
+Routes render a screen and read URL params, nothing else. A screen reaches its own parts with relative paths and
+never imports another screen or `db/` directly. Components never touch the router, stores, hooks, queries or
+SQLite, so they stay reusable. `useQuery` and `useMutation` live in `use-xxx` hook files.
+
+**Schema changes.** Add a new entry to `db/migrations.ts`; never edit one that has shipped. `migrate.ts` runs the
+entries a database has not seen yet and records progress in `PRAGMA user_version`.
+
+**Colors.** Edit `src/themes/colors.json`. Use class names (`bg-brand`, `bg-surface`) where possible and
+`theme.colors.*` for props that cannot take a class (Slider tint, navigator background). Class names stay complete
+literal strings so Tailwind can find them (`tailwind.config.js` scans `src/**/*.{ts,tsx}`), and
+`.vscode/settings.json` points Tailwind IntelliSense at the `styles = { ... }` objects.
+
+**Not used from the guide:** `server/` and `+api` routes (the app has no backend) and platform-specific file
+extensions (`.web`, `.ios`; the app is native-only because `expo-trim-video` is).
 
 ### Naming
 
-| What                 | Convention                                                                                                              | Example                                                                                |
-| -------------------- | ----------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| Files and folders    | kebab-case, as in the Expo template. Exports keep React casing (`VideoList`, `useTrimStep`)                             | `video-list/`, `use-trim-step.ts`, `format-date.ts`                                    |
-| Component folder     | `name/` with `index.tsx` (the component) and `name.styles.ts`                                                           | `video-list/index.tsx`, `video-list/video-list.styles.ts`                              |
-| Styles file          | `name.styles.ts`, one `styles` object of literal class strings                                                          | `video-list.styles.ts`                                                                 |
-| Hook file            | `use-xxx.ts`, exporting `useXxx`                                                                                        | `use-trim-step.ts` -> `useTrimStep`                                                    |
-| Route file           | lowercase, `[param]`, `_layout`; collection name is plural, same as the feature                                         | `videos/[id]/edit.tsx`                                                                 |
-| Route default export | `<Name>Screen`                                                                                                          | `VideoDetailsScreen`, `TrimStepScreen`                                                 |
-| Crop step            | route, hook and component share one name: `/crop/trim` -> `use-trim-step` -> `trim-step`                                | `metadata-step`                                                                        |
-| Shared form          | `metadata-form` renders fields only and takes a `header` slot; `metadata-step` and `edit-video` fill it                 |                                                                                        |
-| Formatting           | `.prettierrc.json`: single quotes, 110 columns (Tailwind IntelliSense reads single-quoted `styles` objects)             |                                                                                        |
-| Feature modules      | lowercase noun, one role each                                                                                           | `api/repo.ts`, `api/queries.ts`, `model/store.ts`, `model/schema.ts`, `model/types.ts` |
-| Tests                | next to the code, `*.test.ts(x)`                                                                                        | `schema.test.ts`, `use-trim-step.test.tsx`                                             |
-| Imports              | `@/` across folders, `./` inside a folder, feature public API from outside the feature                                  | `@/shared/ui/button`, `@/features/videos`                                              |
-| `index.ts(x)`        | a component's `index.tsx` holds the component; a module or feature `index.ts` is a named-export entry, never `export *` |                                                                                        |
+| What              | Convention                                                                                    | Example                                                |
+| ----------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| Files and folders | kebab-case, as in the Expo template. Exports keep React casing (`VideoList`, `useTrimStep`)   | `video-list.tsx`, `use-trim-step.ts`, `format-date.ts` |
+| Component file    | `name.tsx` exporting `Name`                                                                   | `components/step-bar.tsx` -> `StepBar`                 |
+| Screen            | `screens/name/index.tsx` exporting `Name`, with `components/` and `hooks/` beside it          | `screens/trim-step/index.tsx` -> `TrimStep`            |
+| Hook file         | `use-xxx.ts`, exporting `useXxx`                                                              | `use-trim-step.ts` -> `useTrimStep`                    |
+| Route file        | lowercase, `[param]`, `_layout`; default export `<Name>Screen`                                | `videos/[id]/edit.tsx` -> `EditVideoScreen`            |
+| Crop step         | route, hook and screen share one name: `/crop/trim` -> `use-trim-step` -> `screens/trim-step` | `metadata-step`                                        |
+| Shared form       | `components/metadata-form` renders fields only and takes a `header` slot; two screens fill it | `metadata-step`, `edit-video`                          |
+| Formatting        | `.prettierrc.json`: single quotes, 110 columns                                                |                                                        |
+| Tests             | next to the code, `*.test.ts(x)`; never in `__tests__`                                        | `video-schema.test.ts`, `use-trim-step.test.tsx`       |
+| Imports           | `@/` across folders, `./components/...` and `./hooks/...` inside a screen                     | `@/hooks/use-videos`, `./hooks/use-trim-step`          |
+| `index.ts(x)`     | only a screen's `index.tsx`, `db/index.ts` and `i18n/index.ts`; no barrels, never `export *`  |                                                        |
 
-`src/test/architecture.test.ts` enforces this: the layer rules above, the component folder layout, kebab-case names for every file and folder, feature public APIs (no deep imports from outside a feature), and `useQuery`/`useMutation` only in `api/queries.ts`.
+`src/test/architecture.test.ts` enforces this: the folder list (and that `src/` has no loose files), what a screen
+folder may contain, import directions, route files that only render a screen, presentational components, one named
+export per component and screen, kebab-case names for every file and folder, no `*.styles` files, and
+`useQuery`/`useMutation` only in hook files.
 
 ## Testing
 
-`npm test` runs the unit tests (schema, repo, migrations, query and controller hooks) and the architecture rules in `src/test/architecture.test.ts`. `npm run typecheck` and `npm run lint` must pass as well.
+`npm test` runs the unit tests (Zod schema, SQLite queries and migrations, the screen hooks for the crop flow, edit and delete, file and date helpers, locale completeness) and the architecture rules in `src/test/architecture.test.ts`. `npm run verify` runs typecheck, lint and tests together, which is what a change has to pass.
 
 ## Tooling
 
 - **Builds:** `eas.json` defines `development` (dev client), `preview` and `production` profiles: `npx eas-cli@latest build --profile development --platform android` (an installable APK for the `preview` profile).
 - **Commits:** see below; a husky hook enforces them locally.
+- **Formatting:** Prettier (with the Tailwind class sorter) via `npm run format`; `lint-staged` formats and lints staged files on commit.
 
 ## i18n
 
-All UI text lives in `src/core/i18n/locales/` (`en.ts`, `tr.ts`) and is read with `t('section.key')` from `react-i18next`. The language follows the device (English if unsupported). `t()` keys are type-checked against `en.ts`, and `tr.ts` is typed as `typeof en`, so a missing key fails `npm run typecheck`. Validation errors from Zod are keys (`validation.*`) translated by the form.
+All UI text lives in `src/i18n/locales/` (`en.ts`, `tr.ts`) and is read with `t('section.key')` from `react-i18next`. The language follows the device (English if unsupported). `t()` keys are type-checked against `en.ts`, and `tr.ts` is typed as `typeof en`, so a missing key fails `npm run typecheck`. Validation errors from Zod are keys (`validation.*`) translated by the form.
 
-To add a language: create `locales/<code>.ts` typed as `typeof en` and register it in `src/core/i18n/index.ts`.
+To add a language: create `locales/<code>.ts` typed as `typeof en` and register it in `src/i18n/index.ts`.
 
 ## Commit messages
 

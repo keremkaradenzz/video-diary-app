@@ -4,11 +4,11 @@ Stack: Expo (SDK 57), Expo Router, Zustand, TanStack Query, expo-trim-video, Nat
 
 ## Step 1 — Project foundation
 
-Expo + TypeScript, NativeWind, ESLint + Prettier, commitlint + husky, feature-based folder layout (`src/app`, `src/features`, `src/shared`, `src/core`) with an architecture test that enforces it.
+Expo + TypeScript, NativeWind, ESLint + Prettier, commitlint + husky, the folder layout from Expo's guide (`src/app`, `src/screens`, `src/components`, `src/hooks`, `src/utils`, plus `src/db`, `src/query`, `src/i18n`, `src/constants`, `src/themes` and `src/types`; each screen folder holds `index.tsx`, `components/` and `hooks/`) with an architecture test that enforces it.
 
 ## Step 2 — Data layer
 
-SQLite `videos` table with versioned migrations (`core/db`), `videos/api/repo.ts` (paged list, count, get, insert, update), TanStack Query hooks in `api/queries.ts`, Zod metadata schema in `videos/model`, Zustand crop store in `crop/model`, `useTrimVideo` mutation in `crop/api`.
+SQLite `videos` table with versioned migrations (`db`), `db/videos.ts` (paged list, count, get, insert, update), TanStack Query hooks in `api/queries.ts`, Zod metadata schema in `utils/video-schema.ts`, Zustand crop store in `hooks/use-crop-store.ts`, `useTrimVideo` mutation in `screens/metadata-step/hooks`.
 
 ## Step 3 — Crop modal: video selection
 

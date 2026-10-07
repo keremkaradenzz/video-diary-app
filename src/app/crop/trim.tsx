@@ -1,7 +1,5 @@
-import { TrimStep, useTrimStep } from '@/features/crop';
+import { TrimStep } from '@/screens/trim-step';
 
 export default function TrimStepScreen() {
-  const { ready, ...view } = useTrimStep();
-  if (!ready) return null;
-  return <TrimStep {...view} />;
+  return <TrimStep />;
 }

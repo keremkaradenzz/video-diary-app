@@ -1,7 +1,5 @@
-import { MetadataStep, useMetadataStep } from '@/features/crop';
+import { MetadataStep } from '@/screens/metadata-step';
 
 export default function MetadataStepScreen() {
-  const { ready, ...view } = useMetadataStep();
-  if (!ready) return null;
-  return <MetadataStep {...view} />;
+  return <MetadataStep />;
 }

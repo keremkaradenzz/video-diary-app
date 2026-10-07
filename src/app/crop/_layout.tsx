@@ -1,7 +1,7 @@
 import { Stack } from 'expo-router';
 
-import { theme } from '@/core/theme';
-import { useResetCropOnExit } from '@/features/crop';
+import { theme } from '@/themes/theme';
+import { useResetCropOnExit } from '@/hooks/use-reset-crop-on-exit';
 
 // Every step draws its own header (StepBar), so the native one stays hidden.
 export default function CropLayout() {
