@@ -20,7 +20,7 @@ SQLite `videos` table with versioned migrations (`db`), `db/videos.ts` (paged li
 
 ## Step 5 — Crop modal: metadata and crop execution
 
-`/crop/metadata`: reusable `MetadataForm` (name input, description textarea) validated with Zod. Submit runs `useTrimVideo` (a TanStack Query mutation around `trimVideo`), then `useSaveVideo`, resets the crop store and returns to the list. Loading and error states are shown; if saving fails, the trimmed file is deleted.
+`/crop/metadata`: reusable `MetadataForm` (name input, description textarea) validated with Zod. Submit runs `useTrimVideo` (a TanStack Query mutation around `trimVideo`), then `useSaveVideo`, resets the crop store and returns to the list. Before saving, the preview frame is written to the list's thumbnail cache, so the new row shows it without decoding the clip. Loading and error states are shown; if saving fails, the trimmed file is deleted.
 
 ## Step 6 — Main screen: video list
 

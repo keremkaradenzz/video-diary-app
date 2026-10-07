@@ -2,8 +2,7 @@ import { useQueries, type UseQueryResult } from '@tanstack/react-query';
 import type { VideoThumbnail } from 'expo-video';
 
 import type { Video } from '@/types/video';
-import { fileName } from '@/utils/files';
-import { cachedThumbnail } from '@/utils/thumbnails';
+import { cachedThumbnail, clipThumbKey } from '@/utils/thumbnails';
 
 type ThumbnailResult = { id: number; thumbnail: VideoThumbnail | null };
 
@@ -24,7 +23,7 @@ export function useThumbnails(videos: Video[], seenIds: ReadonlySet<number>) {
         staleTime: Infinity,
         queryFn: async (): Promise<ThumbnailResult> => ({
           id: v.id,
-          thumbnail: await cachedThumbnail(`clip-thumb:${fileName(v.uri)}`, v.uri),
+          thumbnail: await cachedThumbnail(clipThumbKey(v.uri), v.uri),
         }),
       })),
     combine: toThumbnailMap,

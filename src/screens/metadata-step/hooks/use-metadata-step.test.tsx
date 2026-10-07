@@ -4,6 +4,7 @@ import { trimVideo } from 'expo-trim-video';
 
 import { useCropStore } from '@/hooks/use-crop-store';
 import { deleteFile } from '@/utils/files';
+import { generateThumbnails, primeThumbnail } from '@/utils/thumbnails';
 import { insertVideo } from '@/db/videos';
 import i18n from '@/i18n';
 import { createQueryWrapper } from '@/test/query-wrapper';
@@ -16,6 +17,12 @@ jest.mock('expo-router', () => ({
   router: { push: jest.fn(), replace: jest.fn(), back: jest.fn(), dismissTo: jest.fn() },
 }));
 jest.mock('@/utils/files', () => ({ deleteIfCached: jest.fn(), deleteFile: jest.fn() }));
+jest.mock('@/utils/thumbnails', () => ({
+  // Pending by default, so the preview query does not update state after a test has finished.
+  generateThumbnails: jest.fn(() => new Promise(() => {})),
+  primeThumbnail: jest.fn().mockResolvedValue(undefined),
+  clipThumbKey: (uri: string) => `key:${uri}`,
+}));
 jest.mock('expo-trim-video', () => ({ trimVideo: jest.fn() }));
 jest.mock('expo-file-system', () => ({
   Paths: { document: 'doc' },
@@ -71,6 +78,21 @@ describe('useMetadataStep', () => {
       uri: expect.stringMatching(/clip-\d+\.mp4$/),
       startSec: 3,
     });
+  });
+
+  it('caches the preview frame for the new clip before saving it, so the list does not decode it again', async () => {
+    mockedTrim.mockResolvedValue({ uri: 'file:///tmp/t.mp4' });
+    jest.mocked(generateThumbnails).mockResolvedValueOnce([{ frame: 'preview' }] as never);
+    const { result } = setup();
+    await waitFor(() => expect(result.current.thumbnail).toBeDefined());
+
+    act(() => result.current.form.onChangeName('Trip'));
+    act(() => result.current.form.onSubmit());
+
+    await waitFor(() => expect(router.dismissTo).toHaveBeenCalledWith('/'));
+    const prime = jest.mocked(primeThumbnail);
+    expect(prime).toHaveBeenCalledWith(expect.stringMatching(/^key:.*clip-\d+\.mp4$/), { frame: 'preview' });
+    expect(prime.mock.invocationCallOrder[0]).toBeLessThan(mockedInsert.mock.invocationCallOrder[0]);
   });
 
   it('shows validation errors and does not start trimming', () => {

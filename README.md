@@ -58,7 +58,7 @@ Scripts: `npm test`, `npm run typecheck`, `npm run lint`, `npm run format:check`
 
 - **Persistence:** clips live in SQLite (`expo-sqlite`) rather than Zustand + AsyncStorage. It gives an indexed, paged, newest-first query that keeps a growing list cheap. The schema is versioned with append-only migrations.
 - **Zustand** holds only the transient crop wizard state (picked video, its duration, start second) and is reset when the modal closes. It is not persisted.
-- **TanStack Query** runs the asynchronous work: `trimVideo` is a mutation, list/detail reads are queries (the list is an infinite query), and thumbnails are queries cached on disk.
+- **TanStack Query** runs the asynchronous work: `trimVideo` is a mutation, list/detail reads are queries (the list is an infinite query), and thumbnails are queries cached on disk under the clip's file name. The details step already shows the frame where the clip starts, so saving writes it to that cache: a new clip appears in the list with its thumbnail instead of being decoded again.
 - **Scrubber:** the clip length is fixed at 5 seconds, so one draggable window over the filmstrip picks the start and the end is derived. It is a single pan gesture (touching outside the window moves it there) with haptic ticks, plus ±1 s buttons and screen-reader increment/decrement actions. A two-handle range would only allow lengths the app rejects.
 - **Validation:** one Zod schema validates both the create and the edit form; its messages are i18n keys.
 - **Clip files** are stored by file name and resolved against the document directory when read, because the app container path changes between installs and updates on iOS. If saving a clip fails after trimming, the trimmed file is deleted.
