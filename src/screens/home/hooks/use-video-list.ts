@@ -12,8 +12,8 @@ export function useVideoList() {
   const { data, isPending, error, hasNextPage, isFetchingNextPage, fetchNextPage } = useVideos();
   const { data: total = 0 } = useVideoCount();
   const videos = data ?? [];
-  const [visibleIds, setVisibleIds] = useState<number[]>([]);
-  const thumbnails = useThumbnails(videos, visibleIds);
+  const [seenIds, setSeenIds] = useState<ReadonlySet<number>>(new Set());
+  const thumbnails = useThumbnails(videos, seenIds);
 
   return {
     videos,
@@ -26,7 +26,10 @@ export function useVideoList() {
       if (hasNextPage && !isFetchingNextPage) void fetchNextPage();
     },
     onViewableItemsChanged: ({ viewableItems }: { viewableItems: ViewToken<Video>[] }) =>
-      setVisibleIds(viewableItems.flatMap((v) => (v.item ? [v.item.id] : []))),
+      setSeenIds((seen) => {
+        const ids = viewableItems.flatMap((v) => (v.item && !seen.has(v.item.id) ? [v.item.id] : []));
+        return ids.length ? new Set([...seen, ...ids]) : seen;
+      }),
     clipSeconds: CLIP_SECONDS,
     onCreate: () => router.push('/crop'),
   };

@@ -152,7 +152,7 @@ describe('components', () => {
   // One file per component, named after it: `button.tsx` exports Button.
   it.each(components)('%s exports the component named after the file', (file) => {
     const name = stem(file) === 'index' ? basename(dirname(file)) : stem(file);
-    expect(read(join(SRC, file))).toMatch(new RegExp(`export function ${pascal(name)}\\b`));
+    expect(read(join(SRC, file))).toMatch(new RegExp(`export (function|const) ${pascal(name)}\\b`));
   });
 });
 

@@ -11,20 +11,21 @@ const toThumbnailMap = (results: UseQueryResult<ThumbnailResult>[]) =>
   Object.fromEntries(results.flatMap((r) => (r.data ? [[r.data.id, r.data.thumbnail]] : [])));
 
 /**
- * First frame of each clip by video id. Frames are generated only for the rows in `visibleIds`
- * (disabled queries still return what is already cached), so a long list does not decode every video.
+ * First frame of each clip by video id. Queries exist only for rows that have been on screen
+ * (`seenIds`), so a long list neither decodes every video nor builds a query per loaded row.
  */
-export function useThumbnails(videos: Video[], visibleIds: number[]) {
+export function useThumbnails(videos: Video[], seenIds: ReadonlySet<number>) {
   return useQueries({
-    queries: videos.map((v) => ({
-      queryKey: ['thumbnail', v.uri],
-      staleTime: Infinity,
-      enabled: visibleIds.includes(v.id),
-      queryFn: async (): Promise<ThumbnailResult> => ({
-        id: v.id,
-        thumbnail: await cachedThumbnail(`clip-thumb:${v.uri}`, v.uri),
-      }),
-    })),
+    queries: videos
+      .filter((v) => seenIds.has(v.id))
+      .map((v) => ({
+        queryKey: ['thumbnail', v.uri],
+        staleTime: Infinity,
+        queryFn: async (): Promise<ThumbnailResult> => ({
+          id: v.id,
+          thumbnail: await cachedThumbnail(`clip-thumb:${v.uri}`, v.uri),
+        }),
+      })),
     combine: toThumbnailMap,
   });
 }

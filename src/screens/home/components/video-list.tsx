@@ -73,7 +73,7 @@ export function VideoList({
             index={index}
             thumbnail={thumbnails[item.id] ?? undefined}
             duration={`0:${String(clipSeconds).padStart(2, '0')}`}
-            onPress={() => onSelect(item.id)}
+            onPress={onSelect}
           />
         )}
       />
