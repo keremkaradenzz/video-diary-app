@@ -38,6 +38,17 @@ export function VideoList({
   const { t } = useTranslation();
   return (
     <Screen>
+      <View className={styles.header}>
+        <Text className={styles.title}>{t('home.title')}</Text>
+        {total > 0 && (
+          <Text className={styles.summary}>
+            {t('home.summary', {
+              count: total,
+              seconds: total * clipSeconds,
+            })}
+          </Text>
+        )}
+      </View>
       <FlashList
         data={videos}
         maintainVisibleContentPosition={{ disabled: true }}
@@ -48,19 +59,6 @@ export function VideoList({
         viewabilityConfig={VIEWABILITY}
         keyExtractor={(v) => String(v.id)}
         contentContainerClassName={styles.content}
-        ListHeaderComponent={
-          <View className={styles.header}>
-            <Text className={styles.title}>{t('home.title')}</Text>
-            {total > 0 && (
-              <Text className={styles.summary}>
-                {t('home.summary', {
-                  count: total,
-                  seconds: total * clipSeconds,
-                })}
-              </Text>
-            )}
-          </View>
-        }
         ListEmptyComponent={
           <View className={styles.empty}>
             <Text className={styles.emptyTitle}>{t('home.empty')}</Text>
@@ -87,7 +85,7 @@ export function VideoList({
 const styles = {
   container: 'flex-1',
   content: 'px-4',
-  header: 'gap-1 pb-4 pt-4',
+  header: 'gap-1 px-4 pb-4 pt-4',
   title: 'text-3xl font-extrabold text-slate-900',
   summary: 'text-sm text-slate-600',
   bar: 'px-4 pb-3 pt-2',
