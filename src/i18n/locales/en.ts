@@ -44,7 +44,7 @@ export const en = {
     minus: '− 1 s',
     plus: '+ 1 s',
     previewLabel: 'Preview · selected {{seconds}} s loops',
-    trimHint: 'Drag the slider or use the buttons. The clip is always {{seconds}} seconds.',
+    trimHint: 'Drag the frame along the strip or use the buttons. The clip is always {{seconds}} seconds.',
     next: 'Next',
     metadataHeading: 'Name your clip',
     cropAndSave: 'Crop & save',

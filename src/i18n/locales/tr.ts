@@ -47,7 +47,7 @@ export const tr: typeof en = {
     minus: '− 1 sn',
     plus: '+ 1 sn',
     previewLabel: 'Önizleme · seçili {{seconds}} sn döngüde',
-    trimHint: 'Kaydırıcıyı sürükle ya da düğmeleri kullan. Klip her zaman {{seconds}} saniyedir.',
+    trimHint: 'Çerçeveyi şeritte sürükle ya da düğmeleri kullan. Klip her zaman {{seconds}} saniyedir.',
     next: 'İleri',
     metadataHeading: 'Klibe ad ver',
     cropAndSave: 'Kırp ve kaydet',

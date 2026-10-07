@@ -31,7 +31,10 @@ export function Filmstrip({ frames, duration, start, clipLength }: Props) {
       )}
       <View className={styles.dim} style={{ left: 0, width: pct(from) }} />
       <View className={styles.dim} style={{ right: 0, width: pct(100 - from - size) }} />
-      <View className={styles.window} style={{ left: pct(from), width: pct(size) }} />
+      <View className={styles.window} style={{ left: pct(from), width: pct(size) }}>
+        <View className={styles.grip} />
+        <View className={styles.grip} />
+      </View>
     </View>
   );
 }
@@ -40,5 +43,7 @@ const styles = {
   strip: 'h-16 flex-row overflow-hidden rounded-xl bg-slate-300',
   frame: 'flex-1 border-r border-slate-300 bg-slate-400',
   dim: 'absolute bottom-0 top-0 bg-slate-900/55',
-  window: 'absolute bottom-0 top-0 rounded-lg border-[3px] border-white',
+  window:
+    'absolute bottom-0 top-0 flex-row items-center justify-between rounded-lg border-[3px] border-white px-1',
+  grip: 'h-6 w-1 rounded-full bg-white',
 };

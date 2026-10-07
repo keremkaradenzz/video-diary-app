@@ -16,7 +16,7 @@ SQLite `videos` table with versioned migrations (`db`), `db/videos.ts` (paged li
 
 ## Step 4 — Crop modal: scrubber
 
-`/crop/trim`: reusable `VideoPlayer` (expo-video) plus `Scrubber`, a slider for the start of the fixed 5-second window (the end follows). A filmstrip shows frames of the source, the preview loops the window, and a "Next" button below the scrubber goes to `/crop/metadata`.
+`/crop/trim`: reusable `VideoPlayer` (expo-video) plus `Scrubber`, a draggable fixed 5-second window over a filmstrip of the source (the end follows; haptic feedback, ±1 s buttons), the preview loops the window, and a "Next" button below the scrubber goes to `/crop/metadata`.
 
 ## Step 5 — Crop modal: metadata and crop execution
 

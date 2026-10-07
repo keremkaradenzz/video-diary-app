@@ -31,7 +31,7 @@ Scripts: `npm test`, `npm run typecheck`, `npm run lint`, `npm run format:check`
 ## Usage
 
 1. Tap **New video** and choose a video (at least 5 seconds long).
-2. Drag the slider (or use the ±1 s buttons) to pick where the 5-second segment starts. The preview loops that segment.
+2. Drag the frame along the filmstrip, tap the strip to jump there, or use the ±1 s buttons, to pick where the 5-second segment starts. The preview loops that segment.
 3. Tap **Next**, enter a name and description, then tap **Crop & save**.
 4. Open a video from the list to see its details. Tap **Edit** to change its name or description.
 
@@ -59,7 +59,7 @@ Scripts: `npm test`, `npm run typecheck`, `npm run lint`, `npm run format:check`
 - **Persistence:** clips live in SQLite (`expo-sqlite`) rather than Zustand + AsyncStorage. It gives an indexed, paged, newest-first query that keeps a growing list cheap. The schema is versioned with append-only migrations.
 - **Zustand** holds only the transient crop wizard state (picked video, its duration, start second) and is reset when the modal closes. It is not persisted.
 - **TanStack Query** runs the asynchronous work: `trimVideo` is a mutation, list/detail reads are queries (the list is an infinite query), and thumbnails are queries cached on disk.
-- **Scrubber:** the clip length is fixed at 5 seconds, so a single slider picks the start and the end is derived (plus ±1 s nudge buttons). A two-handle range would only allow lengths the app rejects.
+- **Scrubber:** the clip length is fixed at 5 seconds, so one draggable window over the filmstrip picks the start and the end is derived. It is a single pan gesture (touching outside the window moves it there) with haptic ticks, plus ±1 s buttons and screen-reader increment/decrement actions. A two-handle range would only allow lengths the app rejects.
 - **Validation:** one Zod schema validates both the create and the edit form; its messages are i18n keys.
 - **Clip files** are stored by file name and resolved against the document directory when read, because the app container path changes between installs and updates on iOS. If saving a clip fails after trimming, the trimmed file is deleted.
 - **Errors:** a render error in any route shows a translated fallback with a retry button (`ErrorBoundary` in `app/_layout.tsx`); failures of the trim, the database or the list show up as messages in the screen that triggered them.
@@ -142,7 +142,7 @@ routes rather than show a screen.
 | Palette, theme object, Tailwind CSS entry                        | `themes/`                   |
 
 **Screen hooks vs `hooks/`.** A hook in `screens/<name>/hooks/` is that screen's controller: it answers "what
-happens on this screen" (`use-trim-step` pushes the next route and holds the dragged slider value;
+happens on this screen" (`use-trim-step` pushes the next route and holds the dragged window position;
 `use-confirm-delete` asks, deletes and goes back). A hook in `hooks/` is a building block that answers "how is this
 done" (`use-delete-video` removes a row and its file, `use-clip-player` creates a looping player). Screen hooks call
 the building blocks, never the other way round, and a screen never imports another screen's hooks. Data access sits
@@ -163,7 +163,7 @@ SQLite, so they stay reusable. `useQuery` and `useMutation` live in `use-xxx` ho
 entries a database has not seen yet and records progress in `PRAGMA user_version`.
 
 **Colors.** Edit `src/themes/colors.json`. Use class names (`bg-brand`, `bg-surface`) where possible and
-`theme.colors.*` for props that cannot take a class (Slider tint, navigator background). Class names stay complete
+`theme.colors.*` for props that cannot take a class (navigator background). Class names stay complete
 literal strings so Tailwind can find them (`tailwind.config.js` scans `src/**/*.{ts,tsx}`), and
 `.vscode/settings.json` points Tailwind IntelliSense at the `styles = { ... }` objects.
 

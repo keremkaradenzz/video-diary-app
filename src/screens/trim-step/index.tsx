@@ -6,7 +6,6 @@ import { Screen } from '@/components/screen';
 import { StepBar } from '@/components/step-bar';
 import { VideoPlayer } from '@/components/video-player';
 
-import { Filmstrip } from './components/filmstrip';
 import { Scrubber } from './components/scrubber';
 import { useTrimStep } from './hooks/use-trim-step';
 
@@ -36,8 +35,8 @@ export function TrimStep() {
           <Text className={styles.badgeText}>{t('crop.previewLabel', { seconds: clipLength })}</Text>
         </View>
       </View>
-      <Filmstrip frames={frames} duration={duration} start={startSec} clipLength={clipLength} />
       <Scrubber
+        frames={frames}
         duration={duration}
         start={startSec}
         clipLength={clipLength}
