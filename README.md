@@ -1,5 +1,7 @@
 # Video Diary
 
+[![CI](https://github.com/keremkaradenzz/video-diary-app/actions/workflows/ci.yml/badge.svg)](https://github.com/keremkaradenzz/video-diary-app/actions/workflows/ci.yml)
+
 Import a video, crop a 5-second segment, add a name and description, and keep it in a list.
 
 ## Stack
