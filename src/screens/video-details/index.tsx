@@ -14,9 +14,10 @@ import { useVideoDetails } from './hooks/use-video-details';
 
 export function VideoDetails({ id }: { id: number }) {
   const { t } = useTranslation();
-  const { data: video, isPending } = useVideo(id);
+  const { data: video, isPending, error } = useVideo(id);
   const { player, clipSeconds, isDeleting, onEdit, onDelete, onBack } = useVideoDetails(video ?? undefined);
   if (isPending) return <Loader />;
+  if (error) return <Notice text={error.message} />;
   if (!video) return <Notice text={t('common.notFound')} />;
   return (
     <Screen>

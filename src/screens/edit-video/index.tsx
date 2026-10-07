@@ -12,8 +12,9 @@ import { useEditVideo } from './hooks/use-edit-video';
 
 export function EditVideo({ id }: { id: number }) {
   const { t } = useTranslation();
-  const { data: video, isPending } = useVideo(id);
+  const { data: video, isPending, error } = useVideo(id);
   if (isPending) return <Loader />;
+  if (error) return <Notice text={error.message} />;
   if (!video) return <Notice text={t('common.notFound')} />;
   return <EditVideoForm video={video} />;
 }

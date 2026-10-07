@@ -19,6 +19,7 @@ type Props = {
 };
 
 // Memoized (`export const` is allowed by the architecture test for this): a thumbnail arriving for one row must not re-render the others.
+// The React Compiler does not cover this: FlashList re-runs `renderItem` for every visible row, which builds new elements.
 export const VideoListItem = memo(function VideoListItem({
   video,
   thumbnail,
