@@ -30,14 +30,26 @@ const toVideo = (r: Row): Video => ({
 
 export const PAGE_SIZE = 20;
 
-/** One page of clips, newest first. The `(created_at, id)` index serves the ORDER BY. */
-export async function listVideos(offset = 0, limit = PAGE_SIZE): Promise<Video[]> {
+/** Position of a clip in the list order; the next page starts right after it. */
+export type Cursor = { createdAt: string; id: number };
+
+export const toCursor = (v: Video): Cursor => ({ createdAt: v.createdAt, id: v.id });
+
+/**
+ * One page of clips, newest first, starting after `after` (or at the top when omitted).
+ * Keyset instead of OFFSET: rows added or deleted meanwhile cannot shift the page boundary, so a
+ * clip is never listed twice or skipped. The `(created_at, id)` index serves both clauses.
+ */
+export async function listVideos(after?: Cursor, limit = PAGE_SIZE): Promise<Video[]> {
   const db = await getDb();
-  const rows = await db.getAllAsync<Row>(
-    'SELECT * FROM videos ORDER BY created_at DESC, id DESC LIMIT ? OFFSET ?',
-    limit,
-    offset,
-  );
+  const rows = after
+    ? await db.getAllAsync<Row>(
+        'SELECT * FROM videos WHERE (created_at, id) < (?, ?) ORDER BY created_at DESC, id DESC LIMIT ?',
+        after.createdAt,
+        after.id,
+        limit,
+      )
+    : await db.getAllAsync<Row>('SELECT * FROM videos ORDER BY created_at DESC, id DESC LIMIT ?', limit);
   return rows.map(toVideo);
 }
 
@@ -69,4 +81,9 @@ export async function insertVideo(v: Metadata & { uri: string; startSec: number 
 export async function updateMetadata(id: number, m: Metadata) {
   const db = await getDb();
   await db.runAsync('UPDATE videos SET name = ?, description = ? WHERE id = ?', m.name, m.description, id);
+}
+
+export async function deleteVideo(id: number) {
+  const db = await getDb();
+  await db.runAsync('DELETE FROM videos WHERE id = ?', id);
 }

@@ -9,7 +9,15 @@ jest.mock('expo-file-system', () => ({
   }),
 }));
 
-import { countVideos, getVideo, insertVideo, listVideos, PAGE_SIZE, updateMetadata } from './repo';
+import {
+  countVideos,
+  deleteVideo,
+  getVideo,
+  insertVideo,
+  listVideos,
+  PAGE_SIZE,
+  updateMetadata,
+} from './repo';
 
 const row = {
   id: 1,
@@ -37,14 +45,32 @@ describe('videos repo', () => {
     ]);
   });
 
-  it('asks for one page at a time, newest first', async () => {
+  it('asks for the first page newest first', async () => {
     mockDb.getAllAsync.mockResolvedValue([]);
-    await listVideos(40);
+    await listVideos();
     expect(mockDb.getAllAsync).toHaveBeenCalledWith(
-      expect.stringMatching(/ORDER BY created_at DESC, id DESC LIMIT \? OFFSET \?/),
+      expect.stringMatching(/ORDER BY created_at DESC, id DESC LIMIT \?/),
       PAGE_SIZE,
-      40,
     );
+  });
+
+  it('continues after the cursor row instead of skipping by offset', async () => {
+    mockDb.getAllAsync.mockResolvedValue([]);
+    await listVideos({ createdAt: row.created_at, id: 5 });
+    expect(mockDb.getAllAsync).toHaveBeenCalledWith(
+      expect.stringMatching(
+        /WHERE \(created_at, id\) < \(\?, \?\) ORDER BY created_at DESC, id DESC LIMIT \?/,
+      ),
+      row.created_at,
+      5,
+      PAGE_SIZE,
+    );
+    expect(mockDb.getAllAsync.mock.calls[0][0]).not.toMatch(/OFFSET/);
+  });
+
+  it('deleteVideo removes the row by id', async () => {
+    await deleteVideo(4);
+    expect(mockDb.runAsync).toHaveBeenCalledWith('DELETE FROM videos WHERE id = ?', 4);
   });
 
   it('countVideos returns the row count, 0 for an empty table', async () => {

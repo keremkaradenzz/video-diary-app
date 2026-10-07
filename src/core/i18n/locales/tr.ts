@@ -5,6 +5,7 @@ export const tr: typeof en = {
   common: {
     notFound: 'Video bulunamadı.',
     close: 'Kapat',
+    cancel: 'Vazgeç',
     back: 'Geri',
     play: 'Oynat',
     pause: 'Duraklat',
@@ -24,6 +25,10 @@ export const tr: typeof en = {
   },
   details: {
     edit: 'Düzenle',
+    delete: 'Sil',
+    deleteTitle: 'Bu klip silinsin mi?',
+    deleteMessage: 'Klip günlüğünden ve bu cihazdan kaldırılır. Bu işlem geri alınamaz.',
+    deleteFailed: 'Klip silinemedi. Lütfen tekrar dene.',
     meta: '{{date}} · {{seconds}} sn',
   },
   edit: {

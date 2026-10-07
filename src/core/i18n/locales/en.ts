@@ -2,6 +2,7 @@ export const en = {
   common: {
     notFound: 'Video not found.',
     close: 'Close',
+    cancel: 'Cancel',
     back: 'Back',
     play: 'Play',
     pause: 'Pause',
@@ -21,6 +22,10 @@ export const en = {
   },
   details: {
     edit: 'Edit',
+    delete: 'Delete',
+    deleteTitle: 'Delete this clip?',
+    deleteMessage: 'The clip is removed from your diary and from this device. This cannot be undone.',
+    deleteFailed: 'The clip could not be deleted. Please try again.',
     meta: '{{date}} · {{seconds}} s',
   },
   edit: {

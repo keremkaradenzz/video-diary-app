@@ -6,5 +6,5 @@ export const styles = {
   title: 'text-2xl font-extrabold text-slate-900',
   meta: 'text-sm text-slate-600',
   description: 'mt-2 text-base leading-6 text-slate-700',
-  bar: 'px-4 pb-3 pt-2',
+  bar: 'gap-3 px-4 pb-3 pt-2',
 };

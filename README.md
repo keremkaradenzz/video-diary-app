@@ -48,7 +48,8 @@ Scripts: `npm test`, `npm run typecheck`, `npm run lint`.
 | Edit name and description                                   | `/videos/[id]/edit` (`edit-video`, reuses `metadata-form`)                                        |
 | Validation with Zod                                         | one schema for the create and edit forms, inline error messages                                   |
 | Animations with Reanimated                                  | list row entry and error messages                                                                 |
-| Growing lists stay fast                                     | paged infinite query, lazy thumbnails, FlashList                                                  |
+| Delete a clip                                               | `/videos/[id]` (**Delete**, confirmation first): row removed, then the file                       |
+| Growing lists stay fast                                     | keyset-paged infinite query (no skipped or doubled rows), lazy thumbnails, FlashList              |
 | Simple navigation and styling                               | 3-step modal with a step bar, safe areas, loading and error states; NativeWind classes throughout |
 
 ## Design decisions

@@ -4,7 +4,19 @@ import type { VideoThumbnail } from 'expo-video';
 
 import { cachedThumbnail } from '@/shared/media/utils/thumbnails';
 
-import { countVideos, getVideo, insertVideo, listVideos, PAGE_SIZE, updateMetadata } from './repo';
+import { deleteFile } from '@/shared/utils/files';
+
+import {
+  countVideos,
+  deleteVideo,
+  getVideo,
+  insertVideo,
+  listVideos,
+  PAGE_SIZE,
+  toCursor,
+  updateMetadata,
+} from './repo';
+import type { Cursor } from './repo';
 import type { Metadata } from '../model/schema';
 import type { Video } from '../model/types';
 
@@ -23,8 +35,8 @@ export const useVideos = () =>
   useInfiniteQuery({
     queryKey: keys.list,
     queryFn: ({ pageParam }) => listVideos(pageParam),
-    initialPageParam: 0,
-    getNextPageParam: (last, pages) => (last.length === PAGE_SIZE ? pages.length * PAGE_SIZE : undefined),
+    initialPageParam: undefined as Cursor | undefined,
+    getNextPageParam: (last) => (last.length === PAGE_SIZE ? toCursor(last[last.length - 1]) : undefined),
     select: flatten,
   });
 
@@ -36,9 +48,29 @@ export function useSaveVideo() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: insertVideo,
-    // A new row shifts every page offset: reset the list to its first page instead of refetching all.
+    // The new clip lands at the top of the list: reset to the first page instead of refetching every loaded page.
     onSuccess: () =>
       Promise.all([qc.resetQueries({ queryKey: keys.list }), qc.invalidateQueries({ queryKey: keys.count })]),
+  });
+}
+
+export function useDeleteVideo() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (video: Video) => {
+      await deleteVideo(video.id);
+      // After the row: a leftover file is harmless, a row pointing at a missing file is not.
+      deleteFile(video.uri);
+    },
+    // The list keeps its cursors valid, so dropping the row in place is enough. The detail entry is left
+    // alone: the screen is about to close, and clearing it would flash "not found" first.
+    onSuccess: (_, video) => {
+      qc.setQueryData<InfiniteData<Video[]>>(
+        keys.list,
+        (d) => d && { ...d, pages: d.pages.map((page) => page.filter((v) => v.id !== video.id)) },
+      );
+      return qc.invalidateQueries({ queryKey: keys.count });
+    },
   });
 }
 

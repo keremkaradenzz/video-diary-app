@@ -15,11 +15,13 @@ type Props = {
   video: Video;
   player: Player;
   clipSeconds: number;
+  isDeleting: boolean;
   onEdit: () => void;
+  onDelete: () => void;
   onBack: () => void;
 };
 
-export function VideoDetails({ video, player, clipSeconds, onEdit, onBack }: Props) {
+export function VideoDetails({ video, player, clipSeconds, isDeleting, onEdit, onDelete, onBack }: Props) {
   const { t } = useTranslation();
   return (
     <Screen>
@@ -41,7 +43,8 @@ export function VideoDetails({ video, player, clipSeconds, onEdit, onBack }: Pro
         {!!video.description && <Text className={styles.description}>{video.description}</Text>}
       </ScrollView>
       <View className={styles.bar}>
-        <Button variant="secondary" label={t('details.edit')} onPress={onEdit} />
+        <Button variant="secondary" label={t('details.edit')} onPress={onEdit} disabled={isDeleting} />
+        <Button variant="danger" label={t('details.delete')} onPress={onDelete} loading={isDeleting} />
       </View>
     </Screen>
   );
